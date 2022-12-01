@@ -2,14 +2,28 @@ use super::{treasure::TreasureType, Card, CardType};
 use std::slice::Iter;
 
 #[allow(dead_code)]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum IslandCardState {
     Normal,
     Flooded,
     Sunk,
 }
 
-#[derive(Debug, Clone)]
+impl IslandCardState {
+    fn next(&self) -> IslandCardState {
+        match self {
+            IslandCardState::Normal => IslandCardState::Flooded,
+            IslandCardState::Flooded => IslandCardState::Sunk,
+            IslandCardState::Sunk => panic!(),
+        }
+    }
+
+    fn step(&mut self) {
+        *self = self.next();
+    }
+}
+
+#[derive(Debug, Clone, Copy, Hash, PartialEq, Eq)]
 pub enum IslandCardName {
     CliffsOfAbandon,
     Watchtower,
@@ -69,10 +83,39 @@ impl IslandCardName {
         static ALL_CARD_NAMES: [IslandCardName; 24] = IslandCardName::all();
         ALL_CARD_NAMES.iter()
     }
+
+    pub fn shorthand(&self) -> &'static str {
+        match self {
+            IslandCardName::CliffsOfAbandon => "C A",
+            IslandCardName::Watchtower => " W ",
+            IslandCardName::PhantomRock => "P R",
+            IslandCardName::LostLagoon => "L L",
+            IslandCardName::MistyMarsh => "M M",
+            IslandCardName::TwilightHollow => "T H",
+            IslandCardName::CrimsonForest => "C F",
+            IslandCardName::Observatory => " O ",
+            IslandCardName::BreakersBridge => "B B",
+            IslandCardName::DunesOfDeception => "D D",
+            IslandCardName::FoolsLanding => "F L",
+            IslandCardName::BronzeGate => "B G",
+            IslandCardName::GoldGate => "G G",
+            IslandCardName::SilverGate => "S G",
+            IslandCardName::CopperGate => "C G",
+            IslandCardName::IronGate => "I G",
+            IslandCardName::TempleOfTheSun => "T S",
+            IslandCardName::TempleOfTheMoon => "T M",
+            IslandCardName::WhisperingGarden => "W G",
+            IslandCardName::HowlingGarden => "H G",
+            IslandCardName::CaveOfEmbers => "C E",
+            IslandCardName::CaveOfShadows => "C S",
+            IslandCardName::TidalPalace => "T P",
+            IslandCardName::CoralPalace => "C P",
+        }
+    }
 }
 
 #[allow(dead_code)]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Copy)]
 pub struct IslandCard {
     state: IslandCardState,
     can_retrieve: Option<TreasureType>,
@@ -84,7 +127,7 @@ impl IslandCard {
     pub fn new(can_retrieve: Option<TreasureType>, name: IslandCardName) -> IslandCard {
         IslandCard {
             state: IslandCardState::Normal,
-            can_retrieve: can_retrieve,
+            can_retrieve,
             name,
         }
     }
@@ -142,10 +185,48 @@ impl IslandCard {
     pub fn state(&self) -> &IslandCardState {
         &self.state
     }
+
+    pub fn name(&self) -> &IslandCardName {
+        &self.name
+    }
+
+    pub fn sink(&mut self) {
+        self.state.step();
+    }
+
+    pub fn tile_str(&self) -> String {
+        let (horizontal_sep, vertical_sep) = match self.state {
+            IslandCardState::Normal => ("===", "║"),
+            IslandCardState::Flooded => ("---", "|"),
+            IslandCardState::Sunk => ("   ", " "),
+        };
+        let shorthand = self.name.shorthand();
+        format!("+{horizontal_sep}+\n{vertical_sep}{shorthand}{vertical_sep}\n+{horizontal_sep}+")
+    }
 }
 
 impl Card for IslandCard {
     fn card_type() -> CardType {
         CardType::Island
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn test_sink_state() {
+        let mut state = IslandCardState::Normal;
+        state.step();
+        assert_eq!(state, IslandCardState::Flooded);
+        state.step();
+        assert_eq!(state, IslandCardState::Sunk);
+    }
+
+    #[test]
+    fn test_sink_next() {
+        assert_eq!(IslandCardState::Normal.next(), IslandCardState::Flooded);
+        assert_eq!(IslandCardState::Flooded.next(), IslandCardState::Sunk);
     }
 }

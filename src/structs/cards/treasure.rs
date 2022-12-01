@@ -1,6 +1,6 @@
 use super::{Card, CardType};
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, Copy)]
 pub enum TreasureType {
     Earth,
     Wind,

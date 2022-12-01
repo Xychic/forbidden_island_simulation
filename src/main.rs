@@ -1,4 +1,7 @@
 use rand::SeedableRng;
+use structs::game_board::GameBoard;
+
+use crate::structs::cards::island::IslandCardName;
 
 mod decks;
 mod structs;
@@ -14,7 +17,16 @@ fn main() {
     island_deck.shuffle(&mut RNGesus);
     treasure_deck.shuffle(&mut RNGesus);
     flood_deck.shuffle(&mut RNGesus);
-    dbg!(island_deck);
-    dbg!(treasure_deck);
-    dbg!(flood_deck);
+    // dbg!(island_deck);
+    // dbg!(treasure_deck);
+    // dbg!(flood_deck);
+
+    let mut game_board = GameBoard::new(&mut island_deck);
+
+    println!("{}", game_board.show_board());
+    game_board.sink(&IslandCardName::CrimsonForest);
+    // dbg!(game_board);
+    println!("{}", game_board.show_board());
+    game_board.sink(&IslandCardName::CrimsonForest);
+    println!("{}", game_board.show_board());
 }

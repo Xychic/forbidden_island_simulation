@@ -2,6 +2,8 @@ pub mod flood;
 pub mod island;
 pub mod treasure;
 
+use std::slice::Iter;
+
 use rand::{seq::SliceRandom, Rng};
 pub enum CardType {
     Island,
@@ -27,23 +29,27 @@ impl<A: Card> Deck<A> {
         }
     }
 
-    /// Returns a reference to the card at `index`
-    pub fn peak_card(&self, index: usize) -> &A {
-        &self.cards[index]
+    /// Returns a reference to the element at `index` or `None` if out of bounds
+    pub fn peak_card(&self, index: usize) -> Option<&A> {
+        self.cards.get(index)
     }
 
     /// Removes and returns the card at position `index`
-    pub fn pop_card(&mut self, index: usize) -> A {
-        self.cards.remove(index)
+    pub fn pop_card(&mut self, index: usize) -> Option<A> {
+        if index >= self.cards.len() {
+            None
+        } else {
+            Some(self.cards.remove(index))
+        }
     }
 
-    /// Returns a reference to the card on the top of `self`
-    pub fn peak_next(&self) -> &A {
+    /// Returns a reference to the card on top or `None` if deck is empty
+    pub fn peak_next(&self) -> Option<&A> {
         self.peak_card(0)
     }
 
     /// Removes and returns the card on the top of `self`
-    pub fn pop_next(&mut self) -> A {
+    pub fn pop_next(&mut self) -> Option<A> {
         self.pop_card(0)
     }
 
@@ -63,5 +69,15 @@ impl<A: Card> Deck<A> {
         R: Rng,
     {
         self.cards.shuffle(rng);
+    }
+
+    /// Returns an iterator over the deck of cards
+    pub fn iter(&self) -> Iter<A> {
+        self.cards.iter()
+    }
+
+    /// Returns the number of elements in the deck
+    pub fn len(&self) -> usize {
+        self.cards.len()
     }
 }

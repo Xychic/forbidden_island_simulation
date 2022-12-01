@@ -1,5 +1,6 @@
 use super::{island::IslandCardName, Card, CardType};
 
+#[allow(dead_code)]
 #[derive(Debug, Clone)]
 pub struct FloodCard {
     island_card: IslandCardName,
