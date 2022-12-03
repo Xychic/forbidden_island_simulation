@@ -18,8 +18,20 @@ impl IslandCardState {
         }
     }
 
+    fn prev(&self) -> IslandCardState {
+        match self {
+            IslandCardState::Normal => panic!(),
+            IslandCardState::Flooded => IslandCardState::Normal,
+            IslandCardState::Sunk => IslandCardState::Flooded,
+        }
+    }
+
     fn step(&mut self) {
         *self = self.next();
+    }
+
+    fn step_back(&mut self) {
+        *self = self.prev();
     }
 }
 
@@ -192,6 +204,11 @@ impl IslandCard {
 
     pub fn sink(&mut self) {
         self.state.step();
+    }
+
+    pub fn raise(&mut self) {
+        assert!(self.state != IslandCardState::Sunk);
+        self.state.step_back()
     }
 
     pub fn tile_str(&self) -> String {

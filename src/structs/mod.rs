@@ -89,5 +89,12 @@ pub mod game_board {
                 (*card).sink();
             }
         }
+
+        pub fn shore_up(&mut self, card: &IslandCardName) {
+            let (x, y) = *self.locations.get(card).unwrap();
+            if let Some(card) = &mut self.board[y][x] {
+                (*card).raise();
+            }
+        }
     }
 }

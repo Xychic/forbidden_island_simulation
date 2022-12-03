@@ -27,6 +27,9 @@ fn main() {
     game_board.sink(&IslandCardName::CrimsonForest);
     // dbg!(game_board);
     println!("{}", game_board.show_board());
+    game_board.shore_up(&IslandCardName::CrimsonForest);
+    println!("{}", game_board.show_board());
+    game_board.sink(&IslandCardName::CrimsonForest);
     game_board.sink(&IslandCardName::CrimsonForest);
     println!("{}", game_board.show_board());
 }
