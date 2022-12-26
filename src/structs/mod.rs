@@ -1,3 +1,4 @@
+#[macro_use]
 pub mod cards;
 
 pub mod game_board {
@@ -5,7 +6,7 @@ pub mod game_board {
     use std::collections::HashMap;
 
     use super::cards::{
-        island::{IslandCard, IslandCardName},
+        island::{IslandCard, IslandCardName, IslandCardState},
         Deck,
     };
 
@@ -49,7 +50,7 @@ pub mod game_board {
 
             for &(x, y) in ISLAND_COORDS.iter() {
                 board[y][x] = island_deck.pop_next();
-                locations.insert(*board[y][x].unwrap().name(), (x, y));
+                locations.insert(board[y][x].unwrap().name(), (x, y));
             }
             GameBoard { board, locations }
         }
@@ -91,10 +92,37 @@ pub mod game_board {
         }
 
         pub fn shore_up(&mut self, card: &IslandCardName) {
-            let (x, y) = *self.locations.get(card).unwrap();
+            let (x, y) = self.get_location(card);
             if let Some(card) = &mut self.board[y][x] {
                 (*card).raise();
             }
+        }
+
+        pub fn get_location(&self, card: &IslandCardName) -> (usize, usize) {
+            *self.locations.get(card).unwrap()
+        }
+
+        pub fn get_card(&self, coord @ &(x, y): &(usize, usize)) -> Option<IslandCard> {
+            if ISLAND_COORDS.contains(coord) {
+                self.board[y][x]
+            } else {
+                None
+            }
+        }
+
+        pub fn get_adjacent(&self, card: &IslandCardName) -> Vec<IslandCardName> {
+            let (x, y) = self.get_location(card);
+            [(x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1)]
+                .iter()
+                .filter_map(|coord| {
+                    if let Some(card) = self.get_card(coord) {
+                        if *card.state() != IslandCardState::Sunk {
+                            return Some(card.name());
+                        }
+                    }
+                    None
+                })
+                .collect()
         }
     }
 }

@@ -1,4 +1,4 @@
-use super::{island::IslandCardName, Card, CardType};
+use super::{island::IslandCardName, Card, CardType, Deck};
 
 #[allow(dead_code)]
 #[derive(Debug, Clone)]
@@ -22,5 +22,13 @@ impl FloodCard {
 impl Card for FloodCard {
     fn card_type() -> CardType {
         CardType::Flood
+    }
+
+    fn get_deck() -> super::Deck<Self> {
+        Deck::from(
+            &IslandCardName::iter()
+                .map(FloodCard::from_name)
+                .collect::<Vec<_>>(),
+        )
     }
 }
