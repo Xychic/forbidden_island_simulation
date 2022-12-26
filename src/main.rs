@@ -19,10 +19,14 @@ fn main() {
     let mut island_deck = IslandCard::get_deck();
     let mut treasure_deck = TreasureCard::get_deck();
     let mut flood_deck = FloodCard::get_deck();
+    let mut adventurer_deck = AdventurerCard::get_deck();
 
     island_deck.shuffle(&mut RNGesus);
     treasure_deck.shuffle(&mut RNGesus);
     flood_deck.shuffle(&mut RNGesus);
+    adventurer_deck.shuffle(&mut RNGesus);
+
+    dbg!(adventurer_deck.iter().take(4).collect::<Vec<_>>());
 
     let mut game_board = GameBoard::new(&mut island_deck);
 

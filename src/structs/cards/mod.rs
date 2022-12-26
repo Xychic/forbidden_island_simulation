@@ -10,6 +10,7 @@ pub enum CardType {
     Island,
     Treasure,
     Flood,
+    Adventurer,
 }
 
 pub trait Card: Clone {
