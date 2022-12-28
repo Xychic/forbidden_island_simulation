@@ -12,10 +12,8 @@ impl FloodCard {
         FloodCard { island_card }
     }
 
-    pub fn from_name(name: &IslandCardName) -> FloodCard {
-        FloodCard {
-            island_card: name.to_owned(),
-        }
+    pub fn from_name(&name: &IslandCardName) -> FloodCard {
+        FloodCard { island_card: name }
     }
 }
 

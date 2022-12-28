@@ -2,10 +2,10 @@ use rand::SeedableRng;
 use structs::game_board::GameBoard;
 
 use crate::structs::cards::{
-    adventurer::AdventurerCard,
+    adventurer::{AdventurerCard, AdventurerCardType},
     flood::FloodCard,
     island::{IslandCard, IslandCardName},
-    treasure::TreasureCard,
+    treasure::{TreasureCard, TreasureCardType, TreasureType},
     Card,
 };
 
@@ -14,26 +14,33 @@ mod structs;
 
 fn main() {
     // println!("Hello, world!");
-    #[allow(non_snake_case)]
-    let mut RNGesus = rand_chacha::ChaChaRng::seed_from_u64(1);
-    let mut island_deck = IslandCard::get_deck();
-    let mut treasure_deck = TreasureCard::get_deck();
-    let mut flood_deck = FloodCard::get_deck();
-    let mut adventurer_deck = AdventurerCard::get_deck();
-
-    island_deck.shuffle(&mut RNGesus);
-    treasure_deck.shuffle(&mut RNGesus);
-    flood_deck.shuffle(&mut RNGesus);
-    adventurer_deck.shuffle(&mut RNGesus);
-
-    dbg!(adventurer_deck.iter().take(4).collect::<Vec<_>>());
-
-    let mut game_board = GameBoard::new(&mut island_deck);
+    let mut game_board = GameBoard::new(&mut rand_chacha::ChaChaRng::seed_from_u64(1), 2);
 
     game_board.sink(&IslandCardName::CopperGate);
+    game_board
+        .adventurer_locations
+        .entry(AdventurerCardType::Diver)
+        .and_modify(|(a, pos)| {
+            a.receive_card(TreasureCard::new(&TreasureCardType::Treasure(
+                TreasureType::Earth,
+            )));
+            a.receive_card(TreasureCard::new(&TreasureCardType::Treasure(
+                TreasureType::Earth,
+            )));
+            a.receive_card(TreasureCard::new(&TreasureCardType::Treasure(
+                TreasureType::Earth,
+            )));
+            a.receive_card(TreasureCard::new(&TreasureCardType::Treasure(
+                TreasureType::Earth,
+            )));
+            *pos = (2, 3);
+        });
     println!("{}", game_board.show_board());
-    dbg!(game_board.get_adjacent(&IslandCardName::DunesOfDeception));
-    game_board.shore_up(&IslandCardName::CopperGate);
-    // game_board.sink(&IslandCardName::CopperGate);
-    dbg!(game_board.get_adjacent(&IslandCardName::DunesOfDeception));
+
+    dbg!(game_board.get_options(&AdventurerCardType::Diver, 3));
+    // dbg!(game_board.get_moves(&AdventurerCardType::Pilot));
+    // dbg!(game_board.get_adjacent(&IslandCardName::DunesOfDeception));
+    // game_board.shore_up(&IslandCardName::CopperGate);
+    // // game_board.sink(&IslandCardName::CopperGate);
+    // dbg!(game_board.get_adjacent(&IslandCardName::DunesOfDeception));
 }

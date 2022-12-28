@@ -130,68 +130,20 @@ impl IslandCardName {
 #[derive(Debug, Clone, Copy)]
 pub struct IslandCard {
     state: IslandCardState,
-    can_retrieve: Option<TreasureType>,
     name: IslandCardName,
 }
 
 #[allow(dead_code)]
 impl IslandCard {
-    pub fn new(can_retrieve: Option<TreasureType>, name: IslandCardName) -> IslandCard {
+    pub fn new(name: IslandCardName) -> IslandCard {
         IslandCard {
             state: IslandCardState::Normal,
-            can_retrieve,
             name,
         }
     }
 
-    pub fn from_name(name: &IslandCardName) -> IslandCard {
-        match name {
-            IslandCardName::TempleOfTheSun => IslandCard {
-                state: IslandCardState::Normal,
-                can_retrieve: Some(TreasureType::Earth),
-                name: name.to_owned(),
-            },
-            IslandCardName::TempleOfTheMoon => IslandCard {
-                state: IslandCardState::Normal,
-                can_retrieve: Some(TreasureType::Earth),
-                name: name.to_owned(),
-            },
-            IslandCardName::WhisperingGarden => IslandCard {
-                state: IslandCardState::Normal,
-                can_retrieve: Some(TreasureType::Wind),
-                name: name.to_owned(),
-            },
-            IslandCardName::HowlingGarden => IslandCard {
-                state: IslandCardState::Normal,
-                can_retrieve: Some(TreasureType::Wind),
-                name: name.to_owned(),
-            },
-            IslandCardName::CaveOfEmbers => IslandCard {
-                state: IslandCardState::Normal,
-                can_retrieve: Some(TreasureType::Fire),
-                name: name.to_owned(),
-            },
-            IslandCardName::CaveOfShadows => IslandCard {
-                state: IslandCardState::Normal,
-                can_retrieve: Some(TreasureType::Fire),
-                name: name.to_owned(),
-            },
-            IslandCardName::TidalPalace => IslandCard {
-                state: IslandCardState::Normal,
-                can_retrieve: Some(TreasureType::Ocean),
-                name: name.to_owned(),
-            },
-            IslandCardName::CoralPalace => IslandCard {
-                state: IslandCardState::Normal,
-                can_retrieve: Some(TreasureType::Ocean),
-                name: name.to_owned(),
-            },
-            _ => IslandCard {
-                state: IslandCardState::Normal,
-                can_retrieve: None,
-                name: name.to_owned(),
-            },
-        }
+    pub fn from_name(&name: &IslandCardName) -> IslandCard {
+        IslandCard::new(name)
     }
 
     pub fn state(&self) -> &IslandCardState {
@@ -219,6 +171,24 @@ impl IslandCard {
         };
         let shorthand = self.name.shorthand();
         format!("+{horizontal_sep}+\n{vertical_sep}{shorthand}{vertical_sep}\n+{horizontal_sep}+")
+    }
+
+    pub fn can_retrieve(&self, treasure: &TreasureType) -> bool {
+        match self.name {
+            IslandCardName::TempleOfTheSun | IslandCardName::TempleOfTheMoon => {
+                treasure == &TreasureType::Earth
+            }
+            IslandCardName::WhisperingGarden | IslandCardName::HowlingGarden => {
+                treasure == &TreasureType::Wind
+            }
+            IslandCardName::CaveOfEmbers | IslandCardName::CaveOfShadows => {
+                treasure == &TreasureType::Fire
+            }
+            IslandCardName::TidalPalace | IslandCardName::CoralPalace => {
+                treasure == &TreasureType::Ocean
+            }
+            _ => false,
+        }
     }
 }
 

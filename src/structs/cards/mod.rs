@@ -18,7 +18,7 @@ pub trait Card: Clone {
     fn get_deck() -> Deck<Self>;
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct Deck<A: Card> {
     pub cards: Vec<A>,
 }
@@ -94,6 +94,11 @@ impl<T: Card> Deck<T> {
     /// Returns the number of elements in the deck
     pub fn len(&self) -> usize {
         self.cards.len()
+    }
+
+    /// Returns `true` if the deck contains no cards
+    pub fn is_empty(&self) -> bool {
+        self.cards.is_empty()
     }
 }
 

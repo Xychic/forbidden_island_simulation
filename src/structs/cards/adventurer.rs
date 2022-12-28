@@ -3,7 +3,7 @@ use std::slice::Iter;
 use super::{island::IslandCardName, treasure::TreasureCard, Card, CardType, Deck};
 
 #[allow(dead_code)]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct AdventurerCard {
     card_type: AdventurerCardType,
     treasure_hand: Deck<TreasureCard>,
@@ -17,6 +17,7 @@ impl AdventurerCard {
             treasure_hand: Deck::with_capacity(10),
         }
     }
+
     pub fn get_start_card(&self) -> IslandCardName {
         match self.card_type {
             AdventurerCardType::Explorer => IslandCardName::CopperGate,
@@ -27,9 +28,25 @@ impl AdventurerCard {
             AdventurerCardType::Navigator => IslandCardName::GoldGate,
         }
     }
+
+    pub fn receive_card(&mut self, card: TreasureCard) {
+        self.treasure_hand.insert(card);
+    }
+
+    pub fn get_card_count(&self) -> usize {
+        self.treasure_hand.len()
+    }
+
+    pub fn get_type(&self) -> AdventurerCardType {
+        self.card_type
+    }
+
+    pub fn get_hand(&self) -> &Deck<TreasureCard> {
+        &self.treasure_hand
+    }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum AdventurerCardType {
     Explorer,
     Pilot,
