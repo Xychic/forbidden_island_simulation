@@ -86,8 +86,7 @@ impl Board {
         }
     }
 
-    pub fn shore_up(&mut self, card: &IslandCardName) {
-        let (x, y) = self.get_location(card);
+    pub fn shore_up(&mut self, coord @ &(x, y): &(usize, usize)) {
         if let Some(card) = &mut self.board[y][x] {
             (*card).raise();
         }

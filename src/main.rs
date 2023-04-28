@@ -13,13 +13,22 @@ fn main() {
 
     println!("{}", &game.board.show());
 
-    game.do_action(&AdventurerCardType::Navigator, |v| {
+    game.do_action(&AdventurerCardType::Pilot, |v| {
         dbg!(v);
 
-        4
+        10
     });
+
+    // println!("{}", &game.board.show());
 
     dbg!(&game.adventurers);
 
     // game.get_actions(game.adventurers.get(&AdventurerCardType::Pilot).unwrap())
+
+    game.do_action(&AdventurerCardType::Pilot, |v| {
+        dbg!(v);
+        2
+    });
+
+    dbg!(game.adventurers);
 }

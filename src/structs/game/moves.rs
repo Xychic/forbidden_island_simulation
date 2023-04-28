@@ -1,4 +1,4 @@
-use crate::structs::cards::adventurer::AdventurerCardType;
+use crate::structs::cards::{adventurer::AdventurerCardType, treasure::TreasureCardType};
 
 #[derive(Debug)]
 pub struct Action {
@@ -28,7 +28,7 @@ pub enum ActionType {
     Move((usize, usize)),
     NavigatorMove(AdventurerCardType, (usize, usize)),
     ShoreUp((usize, usize)),
-    GiveCard,
+    GiveCard(usize, AdventurerCardType),
     CaptureTreasure,
     PlayActionCard,
     EndTurn,

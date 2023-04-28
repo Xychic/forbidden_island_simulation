@@ -19,8 +19,8 @@ pub trait Card: Clone {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub struct Deck<A: Card> {
-    pub cards: Vec<A>,
+pub struct Deck<T: Card> {
+    pub cards: Vec<T>,
 }
 
 #[allow(dead_code)]

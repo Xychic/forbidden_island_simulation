@@ -8,7 +8,7 @@ pub enum TreasureType {
     Ocean,
 }
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum TreasureCardType {
     Earth,
     Wind,

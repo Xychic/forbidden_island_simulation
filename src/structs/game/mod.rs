@@ -2,6 +2,7 @@ pub mod moves;
 
 use std::collections::{HashMap, HashSet};
 
+use itertools::Itertools;
 use rand::Rng;
 
 use crate::structs::board::ISLAND_COORDS;
@@ -11,7 +12,7 @@ use self::moves::{Action, ActionType};
 use super::{
     board::Board,
     cards::{
-        adventurer::{self, AdventurerCard, AdventurerCardType},
+        adventurer::{AdventurerCard, AdventurerCardType},
         flood::FloodCard,
         island::{IslandCard, IslandCardState},
         treasure::{TreasureCard, TreasureCardType, TreasureType},
@@ -50,11 +51,29 @@ impl Adventurer {
         &self.hand
     }
 
+    pub fn remove_card(&mut self, index: usize) -> TreasureCard {
+        self.hand.pop_card(index).unwrap()
+    }
+
+    pub fn find_card(&self, card_type: &TreasureCardType) -> Option<usize> {
+        for (i, card) in self.hand.iter().enumerate() {
+            if card.get_type() == card_type {
+                return Some(i);
+            }
+        }
+        None
+    }
+
     pub fn receive_card(&mut self, card: TreasureCard) {
         self.hand.insert(card);
     }
 
     pub fn move_to(&mut self, &(x, y): &(usize, usize)) {
+        if self.card == AdventurerCardType::Pilot
+            && self.pos.0.abs_diff(x) + self.pos.1.abs_diff(y) > 1
+        {
+            self.used_pilot_move = true;
+        }
         self.pos = (x, y);
     }
 }
@@ -66,7 +85,7 @@ pub struct Game<R: Rng> {
     pub treasure_discard_deck: Deck<TreasureCard>,
     pub flood_deck: Deck<FloodCard>,
     pub flood_discard_deck: Deck<FloodCard>,
-    pub adventurers: HashMap<AdventurerCardType, Adventurer>,   // TODO Order of hashmap not consistent
+    pub adventurers: HashMap<AdventurerCardType, Adventurer>, // TODO Order of hashmap not consistent
     pub board: Board,
     pub water_level: usize,
     captured_treasures: HashSet<TreasureType>,
@@ -152,7 +171,7 @@ impl<R: Rng> Game<R> {
                 (x, y - 1),
                 (x - 1, y - 1),
             ],
-            (AdventurerCardType::Pilot, true) => Vec::from(ISLAND_COORDS),
+            (AdventurerCardType::Pilot, false) => Vec::from(ISLAND_COORDS),
             _ => vec![(x, y + 1), (x - 1, y), (x + 1, y), (x, y - 1)],
         }
         .iter()
@@ -166,6 +185,34 @@ impl<R: Rng> Game<R> {
         .collect()
     }
 
+    pub fn get_shorable(
+        &self,
+        adventurer_type: &AdventurerCardType,
+        &(x, y): &(usize, usize),
+    ) -> Vec<(usize, usize)> {
+        match adventurer_type {
+            AdventurerCardType::Explorer => vec![
+                (x + 1, y + 1),
+                (x, y + 1),
+                (x - 1, y + 1),
+                (x + 1, y),
+                (x, y),
+                (x - 1, y),
+                (x + 1, y - 1),
+                (x, y - 1),
+                (x - 1, y - 1),
+            ],
+            _ => vec![(x, y + 1), (x - 1, y), (x, y), (x + 1, y), (x, y - 1)],
+        }
+        .iter()
+        .filter(|&pos| {
+            ISLAND_COORDS.contains(pos)
+                && self.board.get_card(pos).unwrap().state() == &IslandCardState::Flooded
+        })
+        .copied()
+        .collect()
+    }
+
     pub fn do_action<F: Fn(&Vec<String>) -> usize>(
         &mut self,
         adventurer_type: &AdventurerCardType,
@@ -174,20 +221,20 @@ impl<R: Rng> Game<R> {
         let adventurer = self.adventurers.get(adventurer_type).unwrap();
         let mut actions = Vec::new();
         // Move
-        for pos in self.get_moves(&adventurer) {
+        for pos in self.get_moves(adventurer) {
             actions.push(Action::new(
                 ActionType::Move(pos),
                 format!("Move to {:?}", self.board.get_card(&pos).unwrap().name()),
             ));
         }
 
+        // Navigator Moves
         if adventurer.card == AdventurerCardType::Navigator {
-            for (i, t) in self
+            for t in self
                 .adventurers
                 .keys()
                 .into_iter()
-                .enumerate()
-                .filter(|&(_, a)| a != &AdventurerCardType::Navigator)
+                .filter(|&a| a != &AdventurerCardType::Navigator)
             {
                 for pos in self.get_moves(self.adventurers.get(t).unwrap()) {
                     actions.push(Action::new(
@@ -203,14 +250,39 @@ impl<R: Rng> Game<R> {
         }
 
         // Shore up
+        // TODO Engineer can shore up 2
+        for pos in self.get_shorable(&adventurer.card, &adventurer.pos) {
+            actions.push(Action::new(
+                ActionType::ShoreUp(pos),
+                format!("Shore up {:?}", self.board.get_card(&pos).unwrap().name()),
+            ))
+        }
 
         // Give card
+        for a in self
+            .adventurers
+            .values()
+            .filter(|a| a.card != adventurer.card && a.pos == adventurer.pos)
+        {
+            for (i, c) in adventurer
+                .get_hand()
+                .iter()
+                .enumerate()
+                .unique_by(|&(_, x)| x)
+            {
+                actions.push(Action::new(
+                    ActionType::GiveCard(i, *a.get_type()),
+                    format!("Give {:?} card to {:?}", c.get_type(), a.get_type()),
+                ));
+            }
+        }
 
         // Capture a treasure
 
         // Play special action card - doesn't use turn
 
         // End Turn
+        // TODO always available
 
         // Choose option
         let action_strings: Vec<_> = actions
@@ -219,15 +291,25 @@ impl<R: Rng> Game<R> {
             .map(|(i, a)| (format!("{i}: {}", a.description())))
             .collect();
         let choice = chooser(&action_strings);
-        let adventurer = self.adventurers.get_mut(adventurer_type).unwrap();
         match actions[choice].action_type() {
-            ActionType::Move(pos) => adventurer.move_to(pos),
+            ActionType::Move(pos) => self
+                .adventurers
+                .get_mut(adventurer_type)
+                .unwrap()
+                .move_to(pos),
             ActionType::NavigatorMove(t, pos) => {
                 let adventurer = self.adventurers.get_mut(t).unwrap();
                 adventurer.move_to(pos);
             }
-            ActionType::ShoreUp(pos) => todo!(),
-            ActionType::GiveCard => todo!(),
+            ActionType::ShoreUp(pos) => self.board.shore_up(pos),
+            ActionType::GiveCard(i, a) => {
+                let card = self
+                    .adventurers
+                    .get_mut(adventurer_type)
+                    .unwrap()
+                    .remove_card(*i);
+                self.adventurers.get_mut(a).unwrap().receive_card(card);
+            }
             ActionType::CaptureTreasure => todo!(),
             ActionType::PlayActionCard => todo!(),
             ActionType::EndTurn => todo!(),
