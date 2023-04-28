@@ -17,6 +17,10 @@ impl FloodCard {
             island_card: name.to_owned(),
         }
     }
+
+    pub fn get_type(&self) -> IslandCardName {
+        self.island_card
+    }
 }
 
 impl Card for FloodCard {

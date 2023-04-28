@@ -8,7 +8,7 @@ pub enum TreasureType {
     Ocean,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub enum TreasureCardType {
     Earth,
     Wind,
@@ -19,7 +19,7 @@ pub enum TreasureCardType {
     WaterRise,
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 #[allow(dead_code)]
 pub struct TreasureCard {
     treasure_type: TreasureCardType,
@@ -29,6 +29,10 @@ pub struct TreasureCard {
 impl TreasureCard {
     pub fn new(treasure_type: TreasureCardType) -> TreasureCard {
         TreasureCard { treasure_type }
+    }
+
+    pub fn get_type(&self) -> &TreasureCardType {
+        &self.treasure_type
     }
 }
 

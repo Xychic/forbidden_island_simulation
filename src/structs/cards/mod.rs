@@ -18,7 +18,7 @@ pub trait Card: Clone {
     fn get_deck() -> Deck<Self>;
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct Deck<A: Card> {
     pub cards: Vec<A>,
 }

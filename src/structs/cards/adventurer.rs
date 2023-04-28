@@ -1,22 +1,19 @@
 use std::slice::Iter;
 
-use super::{island::IslandCardName, treasure::TreasureCard, Card, CardType, Deck};
+use super::{island::IslandCardName, Card, CardType, Deck};
 
 #[allow(dead_code)]
 #[derive(Debug, Clone)]
 pub struct AdventurerCard {
     card_type: AdventurerCardType,
-    treasure_hand: Deck<TreasureCard>,
 }
 
 #[allow(dead_code)]
 impl AdventurerCard {
     pub fn new(&card_type: &AdventurerCardType) -> Self {
-        AdventurerCard {
-            card_type,
-            treasure_hand: Deck::with_capacity(10),
-        }
+        AdventurerCard { card_type }
     }
+
     pub fn get_start_card(&self) -> IslandCardName {
         match self.card_type {
             AdventurerCardType::Explorer => IslandCardName::CopperGate,
@@ -27,9 +24,13 @@ impl AdventurerCard {
             AdventurerCardType::Navigator => IslandCardName::GoldGate,
         }
     }
+
+    pub fn get_type(&self) -> AdventurerCardType {
+        self.card_type
+    }
 }
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum AdventurerCardType {
     Explorer,
     Pilot,
