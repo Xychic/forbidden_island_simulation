@@ -1,13 +1,19 @@
+pub mod moves;
+
 use std::collections::{HashMap, HashSet};
 
 use rand::Rng;
 
+use crate::structs::board::ISLAND_COORDS;
+
+use self::moves::{Action, ActionType};
+
 use super::{
     board::Board,
     cards::{
-        adventurer::{AdventurerCard, AdventurerCardType},
+        adventurer::{self, AdventurerCard, AdventurerCardType},
         flood::FloodCard,
-        island::IslandCard,
+        island::{IslandCard, IslandCardState},
         treasure::{TreasureCard, TreasureCardType, TreasureType},
         Card, Deck,
     },
@@ -16,8 +22,9 @@ use super::{
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
 pub struct Adventurer {
     card: AdventurerCardType,
-    pos: (usize, usize),
+    pub pos: (usize, usize),
     hand: Deck<TreasureCard>,
+    used_pilot_move: bool,
 }
 
 impl Adventurer {
@@ -27,7 +34,12 @@ impl Adventurer {
             card: card.get_type(),
             pos: board.get_location(&start_card),
             hand: Deck::with_capacity(10),
+            used_pilot_move: false,
         }
+    }
+
+    pub fn get_type(&self) -> &AdventurerCardType {
+        &self.card
     }
 
     pub fn get_card_count(&self) -> usize {
@@ -41,6 +53,10 @@ impl Adventurer {
     pub fn receive_card(&mut self, card: TreasureCard) {
         self.hand.insert(card);
     }
+
+    pub fn move_to(&mut self, &(x, y): &(usize, usize)) {
+        self.pos = (x, y);
+    }
 }
 
 #[derive(Debug)]
@@ -50,7 +66,7 @@ pub struct Game<R: Rng> {
     pub treasure_discard_deck: Deck<TreasureCard>,
     pub flood_deck: Deck<FloodCard>,
     pub flood_discard_deck: Deck<FloodCard>,
-    pub adventurers: HashMap<AdventurerCardType, Adventurer>,
+    pub adventurers: HashMap<AdventurerCardType, Adventurer>,   // TODO Order of hashmap not consistent
     pub board: Board,
     pub water_level: usize,
     captured_treasures: HashSet<TreasureType>,
@@ -119,6 +135,102 @@ impl<R: Rng> Game<R> {
             board,
             water_level,
             captured_treasures: HashSet::with_capacity(4),
+        }
+    }
+
+    pub fn get_moves(&self, adventurer: &Adventurer) -> Vec<(usize, usize)> {
+        let adventurer_type = adventurer.card;
+        let (x, y) = adventurer.pos;
+        match (adventurer_type, adventurer.used_pilot_move) {
+            (AdventurerCardType::Explorer, _) => vec![
+                (x + 1, y + 1),
+                (x, y + 1),
+                (x - 1, y + 1),
+                (x + 1, y),
+                (x - 1, y),
+                (x + 1, y - 1),
+                (x, y - 1),
+                (x - 1, y - 1),
+            ],
+            (AdventurerCardType::Pilot, true) => Vec::from(ISLAND_COORDS),
+            _ => vec![(x, y + 1), (x - 1, y), (x + 1, y), (x, y - 1)],
+        }
+        .iter()
+        .filter(|&pos @ &(px, py)| {
+            pos != &(x, y)
+                && ISLAND_COORDS.contains(pos)
+                && (self.board.get_card(&(px, py)).unwrap().state() != &IslandCardState::Sunk
+                    || adventurer_type == AdventurerCardType::Diver)
+        })
+        .copied()
+        .collect()
+    }
+
+    pub fn do_action<F: Fn(&Vec<String>) -> usize>(
+        &mut self,
+        adventurer_type: &AdventurerCardType,
+        chooser: F,
+    ) {
+        let adventurer = self.adventurers.get(adventurer_type).unwrap();
+        let mut actions = Vec::new();
+        // Move
+        for pos in self.get_moves(&adventurer) {
+            actions.push(Action::new(
+                ActionType::Move(pos),
+                format!("Move to {:?}", self.board.get_card(&pos).unwrap().name()),
+            ));
+        }
+
+        if adventurer.card == AdventurerCardType::Navigator {
+            for (i, t) in self
+                .adventurers
+                .keys()
+                .into_iter()
+                .enumerate()
+                .filter(|&(_, a)| a != &AdventurerCardType::Navigator)
+            {
+                for pos in self.get_moves(self.adventurers.get(t).unwrap()) {
+                    actions.push(Action::new(
+                        ActionType::NavigatorMove(t.to_owned(), pos),
+                        format!(
+                            "Move {:?} to {:?}",
+                            t,
+                            self.board.get_card(&pos).unwrap().name()
+                        ),
+                    ));
+                }
+            }
+        }
+
+        // Shore up
+
+        // Give card
+
+        // Capture a treasure
+
+        // Play special action card - doesn't use turn
+
+        // End Turn
+
+        // Choose option
+        let action_strings: Vec<_> = actions
+            .iter()
+            .enumerate()
+            .map(|(i, a)| (format!("{i}: {}", a.description())))
+            .collect();
+        let choice = chooser(&action_strings);
+        let adventurer = self.adventurers.get_mut(adventurer_type).unwrap();
+        match actions[choice].action_type() {
+            ActionType::Move(pos) => adventurer.move_to(pos),
+            ActionType::NavigatorMove(t, pos) => {
+                let adventurer = self.adventurers.get_mut(t).unwrap();
+                adventurer.move_to(pos);
+            }
+            ActionType::ShoreUp(pos) => todo!(),
+            ActionType::GiveCard => todo!(),
+            ActionType::CaptureTreasure => todo!(),
+            ActionType::PlayActionCard => todo!(),
+            ActionType::EndTurn => todo!(),
         }
     }
 }

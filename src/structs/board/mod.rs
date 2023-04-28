@@ -5,7 +5,7 @@ use super::cards::{
     Deck,
 };
 
-const ISLAND_COORDS: [(usize, usize); 24] = [
+pub const ISLAND_COORDS: [(usize, usize); 24] = [
     (2, 0),
     (3, 0),
     (1, 1),
