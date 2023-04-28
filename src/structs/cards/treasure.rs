@@ -24,6 +24,16 @@ impl TreasureType {
         static ALL_TREASURE_TYPES: [TreasureType; 4] = TreasureType::all();
         ALL_TREASURE_TYPES.iter()
     }
+
+    pub fn get_name(self) -> String {
+        match self {
+            TreasureType::Earth => "Earth Stone",
+            TreasureType::Wind => "Statue of Wind",
+            TreasureType::Fire => "Crystal of Fire",
+            TreasureType::Ocean => "Ocean's Chalice",
+        }
+        .to_string()
+    }
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]

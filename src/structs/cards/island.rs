@@ -1,5 +1,5 @@
 use super::{treasure::TreasureType, Card, CardType, Deck};
-use std::slice::Iter;
+use std::{fmt::Debug, slice::Iter};
 
 #[allow(dead_code)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -35,7 +35,7 @@ impl IslandCardState {
     }
 }
 
-#[derive(Debug, Clone, Copy, Hash, PartialEq, Eq)]
+#[derive(Clone, Copy, Hash, PartialEq, Eq)]
 pub enum IslandCardName {
     CliffsOfAbandon,
     Watchtower,
@@ -122,6 +122,37 @@ impl IslandCardName {
             IslandCardName::CaveOfShadows => "C S",
             IslandCardName::TidalPalace => "T P",
             IslandCardName::CoralPalace => "C P",
+        }
+    }
+}
+
+impl Debug for IslandCardName {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        match self {
+            Self::CliffsOfAbandon => write!(f, "Cliffs Of Abandon"),
+            Self::Watchtower => write!(f, "Watchtower"),
+            Self::PhantomRock => write!(f, "Phantom Rock"),
+            Self::LostLagoon => write!(f, "Lost Lagoon"),
+            Self::MistyMarsh => write!(f, "Misty Marsh"),
+            Self::TwilightHollow => write!(f, "Twilight Hollow"),
+            Self::CrimsonForest => write!(f, "Crimson Forest"),
+            Self::Observatory => write!(f, "Observatory"),
+            Self::BreakersBridge => write!(f, "Breakers Bridge"),
+            Self::DunesOfDeception => write!(f, "Dunes Of Deception"),
+            Self::FoolsLanding => write!(f, "Fools Landing"),
+            Self::BronzeGate => write!(f, "Bronze Gate"),
+            Self::GoldGate => write!(f, "Gold Gate"),
+            Self::SilverGate => write!(f, "Silver Gate"),
+            Self::CopperGate => write!(f, "Copper Gate"),
+            Self::IronGate => write!(f, "Iron Gate"),
+            Self::TempleOfTheSun => write!(f, "Temple Of The Sun"),
+            Self::TempleOfTheMoon => write!(f, "Temple Of The Moon"),
+            Self::WhisperingGarden => write!(f, "Whispering Garden"),
+            Self::HowlingGarden => write!(f, "Howling Garden"),
+            Self::CaveOfEmbers => write!(f, "Cave Of Embers"),
+            Self::CaveOfShadows => write!(f, "Cave Of Shadows"),
+            Self::TidalPalace => write!(f, "Tidal Palace"),
+            Self::CoralPalace => write!(f, "Coral Palace"),
         }
     }
 }

@@ -11,10 +11,10 @@ pub mod game_board {
     use crate::structs::cards::Card;
 
     use super::cards::{
-        adventurer::{self, AdventurerCard, AdventurerCardType},
+        adventurer::{AdventurerCard, AdventurerCardType},
         flood::FloodCard,
         island::{IslandCard, IslandCardName, IslandCardState},
-        treasure::{self, TreasureCard, TreasureCardType, TreasureType},
+        treasure::{TreasureCard, TreasureCardType, TreasureType},
         Deck,
     };
 
@@ -192,9 +192,25 @@ pub mod game_board {
                 .collect()
         }
 
-        pub fn get_options(&self, adventurer: &AdventurerCardType, moves_left: usize) {
+        pub fn get_options(
+            &self,
+            adventurer: &AdventurerCardType,
+            moves_left: usize,
+        ) -> Vec<(usize, String)> {
             let (adventurer_struct, (x, y)) = self.adventurer_locations.get(adventurer).unwrap();
-            let moves = self.get_moves(adventurer);
+            let (x, y) = (*x, *y);
+
+            let mut options: Vec<_> = self
+                .get_moves(adventurer)
+                .iter()
+                .enumerate()
+                .map(|(i, &(x, y))| {
+                    (
+                        i,
+                        format!("{}: Move to {:?}", i, self.board[y][x].unwrap().name()),
+                    )
+                })
+                .collect();
 
             if let Some(treasure_type) = TreasureType::iter().find(|&treasure_type| {
                 adventurer_struct
@@ -206,10 +222,19 @@ pub mod game_board {
                     })
                     .count()
                     >= 4
-                    && self.board[*y][*x].unwrap().can_retrieve(treasure_type)
+                    && self.board[y][x].unwrap().can_retrieve(treasure_type)
             }) {
-                dbg!(treasure_type);
-            }
+                options.push((
+                    options.len(),
+                    format!(
+                        "{}: Collect the {}",
+                        options.len(),
+                        treasure_type.get_name()
+                    ),
+                ));
+            };
+
+            options
         }
 
         pub fn get_moves(&self, adventurer: &AdventurerCardType) -> Vec<(usize, usize)> {
@@ -235,7 +260,8 @@ pub mod game_board {
                     && (self.board[y][x].unwrap().state() == &IslandCardState::Normal
                         || adventurer == &AdventurerCardType::Diver)
             })
-            .copied().collect()
+            .copied()
+            .collect()
         }
 
         /// Returns `true` if draws a water rise card

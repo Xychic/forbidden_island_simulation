@@ -2,11 +2,9 @@ use rand::SeedableRng;
 use structs::game_board::GameBoard;
 
 use crate::structs::cards::{
-    adventurer::{AdventurerCard, AdventurerCardType},
-    flood::FloodCard,
-    island::{IslandCard, IslandCardName},
+    adventurer::AdventurerCardType,
+    island::IslandCardName,
     treasure::{TreasureCard, TreasureCardType, TreasureType},
-    Card,
 };
 
 #[macro_use]
@@ -16,7 +14,7 @@ fn main() {
     // println!("Hello, world!");
     let mut game_board = GameBoard::new(&mut rand_chacha::ChaChaRng::seed_from_u64(1), 2);
 
-    game_board.sink(&IslandCardName::CopperGate);
+    // game_board.sink(&IslandCardName::CopperGate);
     game_board
         .adventurer_locations
         .entry(AdventurerCardType::Diver)
