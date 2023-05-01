@@ -11,7 +11,7 @@ pub enum TreasureType {
 }
 
 impl TreasureType {
-    pub const fn all() -> [TreasureType; 4] {
+    const fn _all() -> [TreasureType; 4] {
         [
             TreasureType::Earth,
             TreasureType::Wind,
@@ -20,8 +20,8 @@ impl TreasureType {
         ]
     }
 
-    pub fn iter() -> Iter<'static, TreasureType> {
-        static ALL_TREASURE_TYPES: [TreasureType; 4] = TreasureType::all();
+    pub fn _iter() -> Iter<'static, TreasureType> {
+        static ALL_TREASURE_TYPES: [TreasureType; 4] = TreasureType::_all();
         ALL_TREASURE_TYPES.iter()
     }
 

@@ -12,7 +12,7 @@ use self::moves::{ActionStage, MoveType};
 use super::{
     board::Board,
     cards::{
-        adventurer::{self, AdventurerCard, AdventurerCardType},
+        adventurer::{AdventurerCard, AdventurerCardType},
         flood::FloodCard,
         island::{IslandCard, IslandCardState},
         treasure::{SpecialActionType, TreasureCard, TreasureCardType, TreasureType},
@@ -646,12 +646,11 @@ impl<R: Rng> Game<R> {
 
         let actions = states
             .iter()
-            .map(|(n, dests, adventurers)| {
+            .flat_map(|(n, dests, adventurers)| {
                 dests
                     .iter()
                     .cartesian_product(adventurers.iter().combinations(*n))
             })
-            .flatten()
             .map(|(&&pos, who)| {
                 (
                     (pos, who.to_owned()),

@@ -7,7 +7,6 @@ use std::slice::Iter;
 
 use rand::{seq::SliceRandom, Rng};
 
-use self::treasure::TreasureCard;
 pub enum CardType {
     Island,
     Treasure,

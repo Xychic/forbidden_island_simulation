@@ -86,7 +86,7 @@ impl Board {
         }
     }
 
-    pub fn shore_up(&mut self, coord @ &(x, y): &(usize, usize)) {
+    pub fn shore_up(&mut self, &(x, y): &(usize, usize)) {
         if let Some(card) = &mut self.board[y][x] {
             (*card).raise();
         }
@@ -104,7 +104,7 @@ impl Board {
         }
     }
 
-    pub fn get_adjacent(&self, card: &IslandCardName) -> Vec<IslandCardName> {
+    pub fn _get_adjacent(&self, card: &IslandCardName) -> Vec<IslandCardName> {
         let (x, y) = self.get_location(card);
         [(x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1)]
             .iter()
@@ -121,12 +121,24 @@ impl Board {
 
     pub fn has_shorable(&self) -> bool {
         for row in self.board {
-            for card in row {
-                if card.unwrap().state() == &IslandCardState::Flooded {
+            for card in row.into_iter().flatten() {
+                if card.state() == &IslandCardState::Flooded {
                     return true;
                 }
             }
         }
         false
+    }
+
+    pub fn get_shorable(&self) -> Vec<IslandCardName> {
+        let mut shorable = Vec::new();
+        for row in self.board {
+            for card in row.into_iter().flatten() {
+                if card.state() == &IslandCardState::Flooded {
+                    shorable.push(card.name());
+                }
+            }
+        }
+        shorable
     }
 }
