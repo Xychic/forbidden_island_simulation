@@ -1,6 +1,8 @@
+use std::slice::Iter;
+
 use super::{Card, CardType, Deck};
 
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum TreasureType {
     Earth,
     Wind,
@@ -8,15 +10,83 @@ pub enum TreasureType {
     Ocean,
 }
 
+impl TreasureType {
+    pub const fn all() -> [TreasureType; 4] {
+        [
+            TreasureType::Earth,
+            TreasureType::Wind,
+            TreasureType::Fire,
+            TreasureType::Ocean,
+        ]
+    }
+
+    pub fn iter() -> Iter<'static, TreasureType> {
+        static ALL_TREASURE_TYPES: [TreasureType; 4] = TreasureType::all();
+        ALL_TREASURE_TYPES.iter()
+    }
+
+    pub fn get_name(self) -> String {
+        match self {
+            TreasureType::Earth => "Earth Stone",
+            TreasureType::Wind => "Statue of Wind",
+            TreasureType::Fire => "Crystal of Fire",
+            TreasureType::Ocean => "Ocean's Chalice",
+        }
+        .to_string()
+    }
+}
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
-pub enum TreasureCardType {
-    Earth,
-    Wind,
-    Fire,
-    Ocean,
+pub enum SpecialActionType {
     Sandbag,
     HelicopterLift,
+}
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub enum TreasureCardType {
+    Treasure(TreasureType),
+    SpecialAction(SpecialActionType),
     WaterRise,
+}
+
+impl TreasureCardType {
+    pub const fn all() -> [TreasureCardType; 28] {
+        [
+            TreasureCardType::Treasure(TreasureType::Earth),
+            TreasureCardType::Treasure(TreasureType::Earth),
+            TreasureCardType::Treasure(TreasureType::Earth),
+            TreasureCardType::Treasure(TreasureType::Earth),
+            TreasureCardType::Treasure(TreasureType::Earth),
+            TreasureCardType::Treasure(TreasureType::Wind),
+            TreasureCardType::Treasure(TreasureType::Wind),
+            TreasureCardType::Treasure(TreasureType::Wind),
+            TreasureCardType::Treasure(TreasureType::Wind),
+            TreasureCardType::Treasure(TreasureType::Wind),
+            TreasureCardType::Treasure(TreasureType::Fire),
+            TreasureCardType::Treasure(TreasureType::Fire),
+            TreasureCardType::Treasure(TreasureType::Fire),
+            TreasureCardType::Treasure(TreasureType::Fire),
+            TreasureCardType::Treasure(TreasureType::Fire),
+            TreasureCardType::Treasure(TreasureType::Ocean),
+            TreasureCardType::Treasure(TreasureType::Ocean),
+            TreasureCardType::Treasure(TreasureType::Ocean),
+            TreasureCardType::Treasure(TreasureType::Ocean),
+            TreasureCardType::Treasure(TreasureType::Ocean),
+            TreasureCardType::WaterRise,
+            TreasureCardType::WaterRise,
+            TreasureCardType::WaterRise,
+            TreasureCardType::SpecialAction(SpecialActionType::HelicopterLift),
+            TreasureCardType::SpecialAction(SpecialActionType::HelicopterLift),
+            TreasureCardType::SpecialAction(SpecialActionType::HelicopterLift),
+            TreasureCardType::SpecialAction(SpecialActionType::Sandbag),
+            TreasureCardType::SpecialAction(SpecialActionType::Sandbag),
+        ]
+    }
+
+    pub fn iter() -> Iter<'static, TreasureCardType> {
+        static ALL_CARD_TYPES: [TreasureCardType; 28] = TreasureCardType::all();
+        ALL_CARD_TYPES.iter()
+    }
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
@@ -27,7 +97,7 @@ pub struct TreasureCard {
 
 #[allow(dead_code)]
 impl TreasureCard {
-    pub fn new(treasure_type: TreasureCardType) -> TreasureCard {
+    pub fn new(&treasure_type: &TreasureCardType) -> TreasureCard {
         TreasureCard { treasure_type }
     }
 
@@ -42,37 +112,10 @@ impl Card for TreasureCard {
     }
 
     fn get_deck() -> super::Deck<Self> {
-        Deck {
-            cards: vec![
-                TreasureCard::new(TreasureCardType::Earth),
-                TreasureCard::new(TreasureCardType::Earth),
-                TreasureCard::new(TreasureCardType::Earth),
-                TreasureCard::new(TreasureCardType::Earth),
-                TreasureCard::new(TreasureCardType::Earth),
-                TreasureCard::new(TreasureCardType::Wind),
-                TreasureCard::new(TreasureCardType::Wind),
-                TreasureCard::new(TreasureCardType::Wind),
-                TreasureCard::new(TreasureCardType::Wind),
-                TreasureCard::new(TreasureCardType::Wind),
-                TreasureCard::new(TreasureCardType::Fire),
-                TreasureCard::new(TreasureCardType::Fire),
-                TreasureCard::new(TreasureCardType::Fire),
-                TreasureCard::new(TreasureCardType::Fire),
-                TreasureCard::new(TreasureCardType::Fire),
-                TreasureCard::new(TreasureCardType::Ocean),
-                TreasureCard::new(TreasureCardType::Ocean),
-                TreasureCard::new(TreasureCardType::Ocean),
-                TreasureCard::new(TreasureCardType::Ocean),
-                TreasureCard::new(TreasureCardType::Ocean),
-                TreasureCard::new(TreasureCardType::WaterRise),
-                TreasureCard::new(TreasureCardType::WaterRise),
-                TreasureCard::new(TreasureCardType::WaterRise),
-                TreasureCard::new(TreasureCardType::HelicopterLift),
-                TreasureCard::new(TreasureCardType::HelicopterLift),
-                TreasureCard::new(TreasureCardType::HelicopterLift),
-                TreasureCard::new(TreasureCardType::Sandbag),
-                TreasureCard::new(TreasureCardType::Sandbag),
-            ],
-        }
+        Deck::from(
+            &TreasureCardType::iter()
+                .map(TreasureCard::new)
+                .collect::<Vec<_>>(),
+        )
     }
 }

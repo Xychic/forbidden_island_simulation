@@ -1,4 +1,7 @@
-use crate::structs::cards::{adventurer::AdventurerCardType, treasure::TreasureCardType};
+use crate::structs::cards::{
+    adventurer::AdventurerCardType,
+    treasure::{SpecialActionType, TreasureType},
+};
 
 #[derive(Debug)]
 pub struct Action {
@@ -29,15 +32,15 @@ pub enum ActionType {
     NavigatorMove(AdventurerCardType, (usize, usize)),
     ShoreUp((usize, usize)),
     GiveCard(usize, AdventurerCardType),
-    CaptureTreasure,
-    PlayActionCard,
+    CaptureTreasure(TreasureType),
+    PlayActionCard(AdventurerCardType, usize, SpecialActionType),
     EndTurn,
 }
 
 impl ActionType {
     pub fn cost(&self) -> usize {
         match self {
-            ActionType::PlayActionCard => 0,
+            ActionType::PlayActionCard(_, _, _) => 0,
             _ => 1,
         }
     }

@@ -118,4 +118,15 @@ impl Board {
             })
             .collect()
     }
+
+    pub fn has_shorable(&self) -> bool {
+        for row in self.board {
+            for card in row {
+                if card.unwrap().state() == &IslandCardState::Flooded {
+                    return true;
+                }
+            }
+        }
+        false
+    }
 }

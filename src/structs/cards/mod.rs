@@ -6,6 +6,8 @@ pub mod treasure;
 use std::slice::Iter;
 
 use rand::{seq::SliceRandom, Rng};
+
+use self::treasure::TreasureCard;
 pub enum CardType {
     Island,
     Treasure,
@@ -94,6 +96,16 @@ impl<T: Card> Deck<T> {
     /// Returns the number of elements in the deck
     pub fn len(&self) -> usize {
         self.cards.len()
+    }
+}
+
+impl<T: Card> FromIterator<T> for Deck<T> {
+    fn from_iter<I: IntoIterator<Item = T>>(iter: I) -> Self {
+        let mut d = Deck::new();
+        for i in iter {
+            d.insert(i);
+        }
+        d
     }
 }
 

@@ -1,6 +1,14 @@
+use std::io::{self, Write};
+
 use rand::SeedableRng;
 
-use crate::structs::{cards::adventurer::AdventurerCardType, game::Game};
+use crate::structs::{
+    cards::{
+        adventurer::AdventurerCardType,
+        treasure::{TreasureCard, TreasureCardType, TreasureType},
+    },
+    game::Game,
+};
 
 #[macro_use]
 mod structs;
@@ -9,26 +17,19 @@ fn main() {
     let mut game = Game::new(rand_chacha::ChaChaRng::seed_from_u64(1), 4, 2);
 
     dbg!(&game);
-    dbg!(&game.adventurers);
 
     println!("{}", &game.board.show());
 
-    game.do_action(&AdventurerCardType::Pilot, |v| {
-        dbg!(v);
+    game.do_action(&AdventurerCardType::Pilot, chooser);
+}
 
-        10
-    });
+fn chooser(v: &Vec<String>) -> usize {
+    dbg!(v);
 
-    // println!("{}", &game.board.show());
+    print!("Pick move: ");
+    io::stdout().flush().unwrap();
 
-    dbg!(&game.adventurers);
-
-    // game.get_actions(game.adventurers.get(&AdventurerCardType::Pilot).unwrap())
-
-    game.do_action(&AdventurerCardType::Pilot, |v| {
-        dbg!(v);
-        2
-    });
-
-    dbg!(game.adventurers);
+    let mut guess = String::new();
+    io::stdin().read_line(&mut guess).unwrap();
+    guess.trim().parse().unwrap()
 }

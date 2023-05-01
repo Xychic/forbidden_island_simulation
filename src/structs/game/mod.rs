@@ -12,10 +12,10 @@ use self::moves::{Action, ActionType};
 use super::{
     board::Board,
     cards::{
-        adventurer::{AdventurerCard, AdventurerCardType},
+        adventurer::{AdventurerCard, AdventurerCardType, self},
         flood::FloodCard,
         island::{IslandCard, IslandCardState},
-        treasure::{TreasureCard, TreasureCardType, TreasureType},
+        treasure::{TreasureCard, TreasureCardType, TreasureType, SpecialActionType},
         Card, Deck,
     },
 };
@@ -69,10 +69,12 @@ impl Adventurer {
     }
 
     pub fn move_to(&mut self, &(x, y): &(usize, usize)) {
+        println!("Moving from {:?} to {:?}", self.pos, (x, y));
         if self.card == AdventurerCardType::Pilot
             && self.pos.0.abs_diff(x) + self.pos.1.abs_diff(y) > 1
         {
             self.used_pilot_move = true;
+            println!("Using pilot move");
         }
         self.pos = (x, y);
     }
@@ -88,7 +90,7 @@ pub struct Game<R: Rng> {
     pub adventurers: HashMap<AdventurerCardType, Adventurer>, // TODO Order of hashmap not consistent
     pub board: Board,
     pub water_level: usize,
-    captured_treasures: HashSet<TreasureType>,
+    pub captured_treasures: HashSet<TreasureType>,
 }
 
 impl<R: Rng> Game<R> {
@@ -228,7 +230,7 @@ impl<R: Rng> Game<R> {
             ));
         }
 
-        // Navigator Moves
+        // -- Navigator Moves
         if adventurer.card == AdventurerCardType::Navigator {
             for t in self
                 .adventurers
@@ -278,8 +280,47 @@ impl<R: Rng> Game<R> {
         }
 
         // Capture a treasure
+        if let Some(t) = self.board.get_card(&adventurer.pos).unwrap().can_retrieve() {
+            if !self.captured_treasures.contains(&t)
+                && adventurer
+                    .hand
+                    .iter()
+                    .filter(|c| c.get_type() == &TreasureCardType::Treasure(t))
+                    .count()
+                    == 4
+            {
+                actions.push(Action::new(
+                    ActionType::CaptureTreasure(t),
+                    format!("Capture {:?} treasure", t),
+                ));
+            }
+        }
 
         // Play special action card - doesn't use turn
+        for (t, a) in &self.adventurers {
+            for (i, c) in a
+                .get_hand()
+                .iter()
+                .enumerate()
+                .filter_map(|(i, c)| match c.get_type() {
+                    TreasureCardType::SpecialAction(t) => match t {
+                        SpecialActionType::Sandbag => if self.board.has_shorable() {
+                            Some((i, t))
+                        } else {
+                            None
+                        },
+                        SpecialActionType::HelicopterLift => Some((i, t)),
+                    },
+                    _ => None,
+                })
+                .unique_by(|&(_, x)| x)
+            {
+                actions.push(Action::new(
+                    ActionType::PlayActionCard(*t, i, *c),
+                    format!("Play {:?}'s {:?} card", t, c),
+                ));
+            }
+        }
 
         // End Turn
         // TODO always available
@@ -310,8 +351,24 @@ impl<R: Rng> Game<R> {
                     .remove_card(*i);
                 self.adventurers.get_mut(a).unwrap().receive_card(card);
             }
-            ActionType::CaptureTreasure => todo!(),
-            ActionType::PlayActionCard => todo!(),
+            ActionType::CaptureTreasure(t) => {
+                let adventurer = self.adventurers.get_mut(adventurer_type).unwrap();
+                adventurer.hand = adventurer
+                    .hand
+                    .iter()
+                    .filter(|c| c.get_type() != &TreasureCardType::Treasure(*t))
+                    .map(|c| c.to_owned())
+                    .collect();
+                self.captured_treasures.insert(*t);
+            }
+            ActionType::PlayActionCard(a, i, t) => {
+                let adventurer = self.adventurers.get_mut(a).unwrap();
+                adventurer.remove_card(*i);
+                match t {
+                    SpecialActionType::Sandbag => todo!(),
+                    SpecialActionType::HelicopterLift => todo!(),
+                }
+            },
             ActionType::EndTurn => todo!(),
         }
     }

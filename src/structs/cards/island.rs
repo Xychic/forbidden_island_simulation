@@ -220,6 +220,10 @@ impl IslandCard {
         let shorthand = self.name.shorthand();
         format!("+{horizontal_sep}+\n{vertical_sep}{shorthand}{vertical_sep}\n+{horizontal_sep}+")
     }
+
+    pub fn can_retrieve(&self) -> Option<TreasureType> {
+        self.can_retrieve
+    }
 }
 
 impl Card for IslandCard {
