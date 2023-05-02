@@ -1,7 +1,11 @@
-use std::io::{self, Write};
+use std::{
+    io::{self, Write},
+    time::Instant,
+};
 
 use rand::{Rng, SeedableRng};
 use structs::game::moves::Action;
+use thousands::Separable;
 
 use crate::structs::game::Game;
 
@@ -9,11 +13,35 @@ use crate::structs::game::Game;
 mod structs;
 
 fn main() {
-    let mut game = Game::new(rand_chacha::ChaChaRng::seed_from_u64(1), 4, 2, false);
-    println!("{:?}", game.play(chooser));
+    let mut timer = Instant::now();
+    let start = timer;
+    let mut rounds_simulated = 0;
+    let mut wins = 0;
+
+    for i in 0..10_000_000 {
+        let mut game = Game::new(rand_chacha::ChaChaRng::seed_from_u64(i), 4, 2, false);
+        let (win, _, rounds) = game.play(chooser);
+        if win {
+            wins += 1;
+        }
+        rounds_simulated += rounds;
+        if (Instant::now() - timer).as_millis() >= 1000 {
+            print!(
+                "{i} Rate: {} rounds/s\r",
+                (rounds_simulated / (Instant::now() - start).as_secs()).separate_with_commas()
+            );
+            io::stdout().flush().unwrap();
+            timer = Instant::now();
+        }
+    }
+    println!(
+        "Rate: {} rounds/s",
+        (rounds_simulated / (Instant::now() - start).as_secs()).separate_with_commas()
+    );
+    println!("{wins} wins");
 }
 
-fn chooser_2(_stage: Action, v: &Vec<String>) -> usize {
+fn _manual_chooser(_stage: Action, v: &Vec<String>) -> usize {
     let mut guess;
     loop {
         // dbg!(&stage);
@@ -35,11 +63,10 @@ fn chooser_2(_stage: Action, v: &Vec<String>) -> usize {
     }
 }
 
-fn chooser(_stage: Action, v: &Vec<String>) -> usize {
-    // for action in v {
-    //     println!("{action}");
-    // }
-    let num = rand::thread_rng().gen_range(0..v.len());
-    // println!("{num}");
-    num
+fn chooser(stage: Action, v: &Vec<String>) -> usize {
+    if v.is_empty() {
+        dbg!(stage);
+        panic!()
+    }
+    rand::thread_rng().gen_range(0..v.len())
 }

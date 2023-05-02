@@ -7,15 +7,7 @@ use std::slice::Iter;
 
 use rand::{seq::SliceRandom, Rng};
 
-pub enum CardType {
-    Island,
-    Treasure,
-    Flood,
-    Adventurer,
-}
-
 pub trait Card: Clone + Eq {
-    fn card_type() -> CardType;
     fn get_deck() -> Deck<Self>;
     fn as_string(&self) -> String;
 }

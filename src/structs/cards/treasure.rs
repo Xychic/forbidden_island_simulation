@@ -1,6 +1,6 @@
 use std::slice::Iter;
 
-use super::{island::IslandCardName, Card, CardType, Deck};
+use super::{island::IslandCardName, Card, Deck};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum TreasureType {
@@ -122,10 +122,6 @@ impl TreasureCard {
 }
 
 impl Card for TreasureCard {
-    fn card_type() -> super::CardType {
-        CardType::Treasure
-    }
-
     fn get_deck() -> super::Deck<Self> {
         Deck::from(
             &TreasureCardType::iter()

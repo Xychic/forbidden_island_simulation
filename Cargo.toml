@@ -9,3 +9,7 @@ edition = "2021"
 itertools = "0.10.5"
 rand = "0.8.5"
 rand_chacha = "0.3.1"
+thousands = "0.2.0"
+
+[profile.release]
+debug = true

@@ -1,4 +1,4 @@
-use super::{treasure::TreasureType, Card, CardType, Deck};
+use super::{treasure::TreasureType, Card, Deck};
 use std::slice::Iter;
 
 #[allow(dead_code)]
@@ -256,10 +256,6 @@ impl IslandCard {
 }
 
 impl Card for IslandCard {
-    fn card_type() -> CardType {
-        CardType::Island
-    }
-
     fn get_deck() -> super::Deck<Self> {
         Deck::from(
             &IslandCardName::iter()

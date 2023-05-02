@@ -12,7 +12,7 @@ use self::moves::{Action, MoveType};
 use super::{
     board::Board,
     cards::{
-        adventurer::{AdventurerCard, AdventurerCardType},
+        adventurer::{Adventurer, AdventurerCard, AdventurerCardType},
         flood::FloodCard,
         island::{IslandCard, IslandCardState},
         treasure::{SpecialActionType, TreasureCard, TreasureCardType, TreasureType},
@@ -20,66 +20,18 @@ use super::{
     },
 };
 
-#[derive(Debug, Clone, PartialEq, Eq, Hash)]
-pub struct Adventurer {
-    card: AdventurerCardType,
-    pub pos: (usize, usize),
-    hand: Deck<TreasureCard>,
-    used_pilot_move: bool,
-}
-
-impl Adventurer {
-    pub fn new(card: AdventurerCard, board: &Board) -> Adventurer {
-        let start_card = card.get_start_card();
-        Adventurer {
-            card: card.get_type(),
-            pos: board.get_location(&start_card),
-            hand: Deck::with_capacity(10),
-            used_pilot_move: false,
-        }
-    }
-
-    pub fn get_type(&self) -> &AdventurerCardType {
-        &self.card
-    }
-
-    pub fn get_card_count(&self) -> usize {
-        self.hand.len()
-    }
-
-    pub fn get_hand(&self) -> &Deck<TreasureCard> {
-        &self.hand
-    }
-
-    pub fn remove_card(&mut self, index: usize) -> TreasureCard {
-        self.hand.pop_card(index).unwrap()
-    }
-
-    // pub fn find_card(&self, card_type: &TreasureCardType) -> Option<usize> {
-    //     for (i, card) in self.hand.iter().enumerate() {
-    //         if card.get_type() == card_type {
-    //             return Some(i);
-    //         }
-    //     }
-    //     None
-    // }
-
-    pub fn receive_card(&mut self, card: TreasureCard) {
-        self.hand.insert(card);
-    }
-}
-
 #[derive(Debug)]
 pub struct Game<R: Rng> {
-    pub rng: R,
-    pub treasure_deck: Deck<TreasureCard>,
-    pub treasure_discard_deck: Deck<TreasureCard>,
-    pub flood_deck: Deck<FloodCard>,
-    pub flood_discard_deck: Deck<FloodCard>,
-    pub adventurers: Vec<Adventurer>,
-    pub board: Board,
-    pub water_level: usize,
-    pub captured_treasures: HashSet<TreasureType>,
+    rng: R,
+    treasure_deck: Deck<TreasureCard>,
+    treasure_discard_deck: Deck<TreasureCard>,
+    flood_deck: Deck<FloodCard>,
+    flood_discard_deck: Deck<FloodCard>,
+    adventurers: Vec<Adventurer>,
+    board: Board,
+    water_level: usize,
+    captured_treasures: HashSet<TreasureType>,
+    used_pilot_move: bool,
     debug: bool,
 }
 
@@ -147,10 +99,11 @@ impl<R: Rng> Game<R> {
             water_level,
             captured_treasures: HashSet::with_capacity(4),
             debug,
+            used_pilot_move: false,
         }
     }
 
-    pub fn play<F: Fn(Action, &Vec<String>) -> usize>(&mut self, player: F) -> (bool, String) {
+    pub fn play<F: Fn(Action, &Vec<String>) -> usize>(&mut self, player: F) -> (bool, String, u64) {
         let adventurer_types = self
             .adventurers
             .iter()
@@ -158,19 +111,22 @@ impl<R: Rng> Game<R> {
             .enumerate()
             .collect_vec();
 
-        for (index, adventurer_type) in adventurer_types.iter().cycle() {
+        for (rounds, (index, adventurer_type)) in adventurer_types.iter().cycle().enumerate() {
             // Check for winning
             let fools_landing_pos = self.board.get_location(&IslandCardName::FoolsLanding);
             if self.captured_treasures.len() == 4
-                && self.adventurers.iter().all(|a| a.pos == fools_landing_pos)
+                && self
+                    .adventurers
+                    .iter()
+                    .all(|a| a.get_pos() == &fools_landing_pos)
                 && self.adventurers.iter().any(|a| {
-                    a.hand
+                    a.get_hand()
                         .contains(&TreasureCard::new(&TreasureCardType::SpecialAction(
                             SpecialActionType::HelicopterLift,
                         )))
                 })
             {
-                return (true, String::from("You captured all 4 treasures and used a helicopter lift card to get off fools landing, you win!"));
+                return (true, String::from("You captured all 4 treasures and used a helicopter lift card to get off fools landing, you win!"), rounds as u64);
             }
 
             if self.debug {
@@ -178,7 +134,7 @@ impl<R: Rng> Game<R> {
             }
             // Play up to 3 moves
             self.initial_actions(adventurer_type, &player, 3);
-            self.adventurers[*index].used_pilot_move = false;
+            self.used_pilot_move = false;
 
             // Draw 2 Treasure deck cards
             let (card1, card2) = (self.draw_treasure(), self.draw_treasure());
@@ -218,7 +174,11 @@ impl<R: Rng> Game<R> {
 
             // Draw flood cards
             if self.water_level == 9 {
-                return (false, String::from("\nWater level too high, you lose!\n"));
+                return (
+                    false,
+                    String::from("Water level too high, you lose!"),
+                    rounds as u64,
+                );
             }
             let flood_card_draw_count = match self.water_level {
                 0 | 1 => 2,
@@ -249,7 +209,11 @@ impl<R: Rng> Game<R> {
                 if island_card == IslandCardName::FoolsLanding
                     && self.board.get_by_type(&island_card).state() == &IslandCardState::Sunk
                 {
-                    return (false, String::from("\nFools landing sinks, you lose!\n"));
+                    return (
+                        false,
+                        String::from("Fools landing sinks, you lose!"),
+                        rounds as u64,
+                    );
                 }
                 for treasure in TreasureType::iter() {
                     if !self.captured_treasures.contains(treasure)
@@ -259,7 +223,8 @@ impl<R: Rng> Game<R> {
                     {
                         return (
                             false,
-                            format!("\nCannot retrieve {}, you lose!\n", treasure.get_name()),
+                            format!("Cannot retrieve {}, you lose!", treasure.get_name()),
+                            rounds as u64,
                         );
                     }
                 }
@@ -267,22 +232,24 @@ impl<R: Rng> Game<R> {
                 // Move players if needs be
                 for i in 0..self.adventurers.len() {
                     let to_move = &self.adventurers[i];
-                    if self.board.get_card(&to_move.pos).unwrap().state() == &IslandCardState::Sunk
+                    if self.board.get_card(to_move.get_pos()).unwrap().state()
+                        == &IslandCardState::Sunk
                     {
                         if self.debug {
                             println!(
                                 "{:?} must move off {}",
                                 to_move.get_type(),
-                                self.board.get_card(&to_move.pos).unwrap().as_string()
+                                self.board.get_card(to_move.get_pos()).unwrap().as_string()
                             );
                         }
                         if self.get_moves(to_move).is_empty() {
                             return (
                                 false,
                                 format!(
-                                    "\n{:?} cannot move to safety, you lose!\n",
+                                    "{:?} cannot move to safety, you lose!",
                                     to_move.get_type()
                                 ),
+                                rounds as u64,
                             );
                         } else {
                             let adventurer_type = to_move.get_type().to_owned();
@@ -311,7 +278,10 @@ impl<R: Rng> Game<R> {
             to_show += &format!(
                 "{:?} ({}): [{}]\n",
                 adventurer.get_type(),
-                self.board.get_card(&adventurer.pos).unwrap().as_string(),
+                self.board
+                    .get_card(adventurer.get_pos())
+                    .unwrap()
+                    .as_string(),
                 adventurer
                     .get_hand()
                     .iter()
@@ -338,9 +308,9 @@ impl<R: Rng> Game<R> {
     }
 
     fn can_move(&self, adventurer: &Adventurer) -> bool {
-        let adventurer_type = adventurer.card;
-        let (x, y) = adventurer.pos;
-        match (adventurer_type, adventurer.used_pilot_move) {
+        let adventurer_type = adventurer.get_type();
+        let &(x, y) = adventurer.get_pos();
+        match (adventurer_type, self.used_pilot_move) {
             (AdventurerCardType::Explorer, _) => vec![
                 (x + 1, y + 1),
                 (x, y + 1),
@@ -359,14 +329,14 @@ impl<R: Rng> Game<R> {
             pos != (x, y)
                 && ISLAND_COORDS.contains(&pos)
                 && (self.board.get_card(&(px, py)).unwrap().state() != &IslandCardState::Sunk
-                    || adventurer_type == AdventurerCardType::Diver)
+                    || adventurer_type == &AdventurerCardType::Diver)
         })
     }
 
     pub fn get_moves(&self, adventurer: &Adventurer) -> Vec<(usize, usize)> {
-        let adventurer_type = adventurer.card;
-        let (x, y) = adventurer.pos;
-        match (adventurer_type, adventurer.used_pilot_move) {
+        let adventurer_type = adventurer.get_type();
+        let &(x, y) = adventurer.get_pos();
+        match (adventurer_type, self.used_pilot_move) {
             (AdventurerCardType::Explorer, _) => vec![
                 (x + 1, y + 1),
                 (x, y + 1),
@@ -385,13 +355,13 @@ impl<R: Rng> Game<R> {
             pos != &(x, y)
                 && ISLAND_COORDS.contains(pos)
                 && (self.board.get_card(&(px, py)).unwrap().state() != &IslandCardState::Sunk
-                    || adventurer_type == AdventurerCardType::Diver)
+                    || adventurer_type == &AdventurerCardType::Diver)
         })
         .copied()
         .collect()
     }
 
-    pub fn get_shorable(
+    pub fn get_shorable_by_adventurer(
         &self,
         adventurer_type: &AdventurerCardType,
         &(x, y): &(usize, usize),
@@ -450,16 +420,18 @@ impl<R: Rng> Game<R> {
         for (index, card) in self
             .get_adventurer(adventurer_type)
             .unwrap()
-            .hand
+            .get_hand()
             .iter()
             .enumerate()
         {
             let card_type = card.get_type();
-            if let &TreasureCardType::SpecialAction(_) = card_type {
-                possible_discards.push((
-                    (index, true, card_type),
-                    format!("Use {} card", card.as_string()),
-                ));
+            if let &TreasureCardType::SpecialAction(t) = card_type {
+                if self.board.has_shorable() || t == SpecialActionType::HelicopterLift {
+                    possible_discards.push((
+                        (index, true, card_type),
+                        format!("Use {} card", card.as_string()),
+                    ));
+                }
             }
             possible_discards.push((
                 (index, false, card_type),
@@ -496,7 +468,6 @@ impl<R: Rng> Game<R> {
         chooser: F,
         actions_left: usize,
     ) {
-        // TODO add winning state
         if actions_left == 0 {
             return;
         }
@@ -507,24 +478,28 @@ impl<R: Rng> Game<R> {
             intial_choices.push((Action::Move, format!("Move {adventurer_type:?}")));
         }
 
-        if self.can_shore_up(adventurer_type, &adventurer.pos) {
+        if self.can_shore_up(adventurer_type, &adventurer.get_pos()) {
             intial_choices.push((Action::ShoreUp, String::from("Shore up tile")));
         }
 
-        if adventurer.get_card_count() != 0
+        if adventurer.has_cards()
             && (adventurer_type == &AdventurerCardType::Messenger
-                || self
-                    .adventurers
-                    .iter()
-                    .any(|a| a.get_type() != adventurer_type && a.pos == adventurer.pos))
+                || self.adventurers.iter().any(|a| {
+                    a.get_type() != adventurer_type && a.get_pos() == adventurer.get_pos()
+                }))
         {
             intial_choices.push((Action::GiveCard, String::from("Give card")));
         }
 
-        if let Some(t) = self.board.get_card(&adventurer.pos).unwrap().can_retrieve() {
+        if let Some(t) = self
+            .board
+            .get_card(adventurer.get_pos())
+            .unwrap()
+            .can_retrieve()
+        {
             if !self.captured_treasures.contains(&t)
                 && adventurer
-                    .hand
+                    .get_hand()
                     .iter()
                     .filter(|c| c.get_type() == &TreasureCardType::Treasure(t))
                     .count()
@@ -538,9 +513,13 @@ impl<R: Rng> Game<R> {
         }
 
         if self.adventurers.iter().any(|a| {
-            a.get_hand()
-                .iter()
-                .any(|c| matches!(c.get_type(), TreasureCardType::SpecialAction(_)))
+            a.get_hand().iter().any(|c| match c.get_type() {
+                TreasureCardType::SpecialAction(t) => match t {
+                    SpecialActionType::Sandbag => self.board.has_shorable(),
+                    SpecialActionType::HelicopterLift => true,
+                },
+                _ => false,
+            })
         }) {
             intial_choices.push((Action::PlayActionCard, String::from("Play action card")));
         }
@@ -579,7 +558,7 @@ impl<R: Rng> Game<R> {
         let mut actions = Vec::new();
         // Move
         for pos @ (px, py) in self.get_moves(adventurer) {
-            let (x, y) = adventurer.pos;
+            let (x, y) = adventurer.get_pos();
             let pilot_move = x.abs_diff(px) + y.abs_diff(py) > 1;
             if pilot_move {
                 actions.push((
@@ -602,7 +581,7 @@ impl<R: Rng> Game<R> {
         }
 
         // -- Navigator Moves
-        if adventurer.card == AdventurerCardType::Navigator {
+        if adventurer.get_type() == &AdventurerCardType::Navigator {
             for t in self
                 .adventurers
                 .iter()
@@ -634,12 +613,15 @@ impl<R: Rng> Game<R> {
         };
 
         match actions[choice].0 {
-            MoveType::Move(pos) => self.get_adventurer_mut(adventurer_type).unwrap().pos = pos,
-            MoveType::NavigatorMove(t, pos) => self.get_adventurer_mut(&t).unwrap().pos = pos,
+            MoveType::Move(pos) => self
+                .get_adventurer_mut(adventurer_type)
+                .unwrap()
+                .move_to(pos),
+            MoveType::NavigatorMove(t, pos) => self.get_adventurer_mut(&t).unwrap().move_to(pos),
             MoveType::PilotMove(pos) => {
                 let adventurer = self.get_adventurer_mut(adventurer_type).unwrap();
-                adventurer.pos = pos;
-                adventurer.used_pilot_move = true;
+                adventurer.move_to(pos);
+                self.used_pilot_move = true;
             }
         }
         self.initial_actions(adventurer_type, chooser, actions_left - 1);
@@ -652,7 +634,7 @@ impl<R: Rng> Game<R> {
     ) {
         let adventurer = self.get_adventurer(adventurer_type).unwrap();
         let mut actions = Vec::new();
-        let (x, y) = adventurer.pos;
+        let &(x, y) = adventurer.get_pos();
         // Move
 
         let move_options = match adventurer_type {
@@ -707,7 +689,9 @@ impl<R: Rng> Game<R> {
                 .collect();
             chooser(Action::Move, &action_strings)
         };
-        self.get_adventurer_mut(adventurer_type).unwrap().pos = *actions[choice].0;
+        self.get_adventurer_mut(adventurer_type)
+            .unwrap()
+            .move_to(*actions[choice].0);
     }
 
     fn shore_up<F: Fn(Action, &Vec<String>) -> usize>(
@@ -719,7 +703,7 @@ impl<R: Rng> Game<R> {
         self.shore_up_sub(adventurer_type, &chooser);
         let adventurer = self.get_adventurer(adventurer_type).unwrap();
         if adventurer_type == &AdventurerCardType::Engineer
-            && self.can_shore_up(adventurer_type, &adventurer.pos)
+            && self.can_shore_up(adventurer_type, &adventurer.get_pos())
         {
             let actions = vec![
                 (
@@ -749,7 +733,7 @@ impl<R: Rng> Game<R> {
     ) {
         let adventurer = self.get_adventurer(adventurer_type).unwrap();
         let mut actions = Vec::new();
-        for pos in self.get_shorable(&adventurer.card, &adventurer.pos) {
+        for pos in self.get_shorable_by_adventurer(&adventurer.get_type(), &adventurer.get_pos()) {
             actions.push((
                 pos,
                 format!(
@@ -779,11 +763,11 @@ impl<R: Rng> Game<R> {
     ) {
         let mut actions = Vec::new();
         let adventurer = self.get_adventurer(adventurer_type).unwrap();
-        for a in self
-            .adventurers
-            .iter()
-            .filter(|a| a.card != adventurer.card && a.pos == adventurer.pos)
-        {
+        for a in self.adventurers.iter().filter(|a| {
+            a.get_type() != adventurer.get_type()
+                && (adventurer_type == &AdventurerCardType::Messenger
+                    || a.get_pos() == adventurer.get_pos())
+        }) {
             for (i, c) in adventurer
                 .get_hand()
                 .iter()
@@ -826,16 +810,15 @@ impl<R: Rng> Game<R> {
         actions_left: usize,
     ) {
         let adventurer = self.get_adventurer_mut(adventurer_type).unwrap();
-        let mut new_deck = Deck::with_capacity(1);
         let mut taken = 0;
-        for card in adventurer.hand.iter() {
+        for _ in 0..adventurer.get_card_count() {
+            let card = adventurer.remove_card(0);
             if taken < 4 && card.get_type() == &TreasureCardType::Treasure(treasure_type) {
                 taken += 1;
             } else {
-                new_deck.insert(card.to_owned());
+                adventurer.receive_card(card);
             }
         }
-        adventurer.hand = new_deck;
         self.captured_treasures.insert(treasure_type);
         self.initial_actions(adventurer_type, chooser, actions_left - 1);
     }
@@ -920,14 +903,14 @@ impl<R: Rng> Game<R> {
         for (key, group) in &self
             .adventurers
             .iter()
-            .sorted_by_key(|a| a.pos)
-            .group_by(|a| a.pos)
+            .sorted_by_key(|a| a.get_pos())
+            .group_by(|a| a.get_pos())
         {
             let dests = ISLAND_COORDS
                 .iter()
                 .filter(|pos| {
                     self.board.get_card(pos).unwrap().state() != &IslandCardState::Sunk
-                        && **pos != key
+                        && *pos != key
                 })
                 .collect_vec();
             let adventurers = group.map(|a| *a.get_type()).collect_vec();
@@ -967,7 +950,7 @@ impl<R: Rng> Game<R> {
         };
         let (pos, who) = &actions[choice].0;
         for a in who {
-            self.get_adventurer_mut(a).unwrap().pos = *pos;
+            self.get_adventurer_mut(a).unwrap().move_to(*pos);
         }
     }
 }
