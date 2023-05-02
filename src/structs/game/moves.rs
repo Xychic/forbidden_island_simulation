@@ -1,7 +1,7 @@
 use crate::structs::cards::{adventurer::AdventurerCardType, treasure::TreasureType};
 
 #[derive(Debug)]
-pub enum ActionStage {
+pub enum Action {
     Initial,
     Move,
     ShoreUp,
@@ -12,6 +12,7 @@ pub enum ActionStage {
     HelicopterLift,
     EndTurn,
     EndAction,
+    DiscardCards,
 }
 
 #[derive(Debug)]

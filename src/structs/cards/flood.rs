@@ -1,7 +1,7 @@
 use super::{island::IslandCardName, Card, CardType, Deck};
 
 #[allow(dead_code)]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct FloodCard {
     island_card: IslandCardName,
 }
@@ -34,5 +34,9 @@ impl Card for FloodCard {
                 .map(FloodCard::from_name)
                 .collect::<Vec<_>>(),
         )
+    }
+
+    fn as_string(&self) -> String {
+        self.get_type().name()
     }
 }

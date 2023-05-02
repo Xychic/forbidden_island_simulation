@@ -1,6 +1,6 @@
 use std::slice::Iter;
 
-use super::{Card, CardType, Deck};
+use super::{island::IslandCardName, Card, CardType, Deck};
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
 pub enum TreasureType {
@@ -11,7 +11,7 @@ pub enum TreasureType {
 }
 
 impl TreasureType {
-    const fn _all() -> [TreasureType; 4] {
+    const fn all() -> [TreasureType; 4] {
         [
             TreasureType::Earth,
             TreasureType::Wind,
@@ -20,8 +20,8 @@ impl TreasureType {
         ]
     }
 
-    pub fn _iter() -> Iter<'static, TreasureType> {
-        static ALL_TREASURE_TYPES: [TreasureType; 4] = TreasureType::_all();
+    pub fn iter() -> Iter<'static, TreasureType> {
+        static ALL_TREASURE_TYPES: [TreasureType; 4] = TreasureType::all();
         ALL_TREASURE_TYPES.iter()
     }
 
@@ -33,6 +33,21 @@ impl TreasureType {
             TreasureType::Ocean => "Ocean's Chalice",
         }
         .to_string()
+    }
+
+    pub fn retrieved_from(&self) -> [IslandCardName; 2] {
+        match self {
+            TreasureType::Earth => [
+                IslandCardName::TempleOfTheMoon,
+                IslandCardName::TempleOfTheSun,
+            ],
+            TreasureType::Wind => [
+                IslandCardName::WhisperingGarden,
+                IslandCardName::HowlingGarden,
+            ],
+            TreasureType::Fire => [IslandCardName::CaveOfEmbers, IslandCardName::CaveOfShadows],
+            TreasureType::Ocean => [IslandCardName::CoralPalace, IslandCardName::TidalPalace],
+        }
     }
 }
 
@@ -117,5 +132,16 @@ impl Card for TreasureCard {
                 .map(TreasureCard::new)
                 .collect::<Vec<_>>(),
         )
+    }
+
+    fn as_string(&self) -> String {
+        match self.treasure_type {
+            TreasureCardType::Treasure(t) => format!("{t:?}"),
+            TreasureCardType::SpecialAction(t) => String::from(match t {
+                SpecialActionType::Sandbag => "Sandbag",
+                SpecialActionType::HelicopterLift => "Helicopter Lift",
+            }),
+            TreasureCardType::WaterRise => String::from("Water Rise"),
+        }
     }
 }

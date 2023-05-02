@@ -14,9 +14,10 @@ pub enum CardType {
     Adventurer,
 }
 
-pub trait Card: Clone {
+pub trait Card: Clone + Eq {
     fn card_type() -> CardType;
     fn get_deck() -> Deck<Self>;
+    fn as_string(&self) -> String;
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
@@ -79,6 +80,14 @@ impl<T: Card> Deck<T> {
         self.cards.append(&mut other.cards);
     }
 
+    /// Moves all cards from `other` to the front of `self`, leaving `other` empty
+    pub fn stack_front(&mut self, other: &mut Deck<T>) {
+        let mut new_cards = Vec::with_capacity(self.cards.len() + other.cards.len());
+        new_cards.append(&mut other.cards);
+        new_cards.append(&mut self.cards);
+        self.cards = new_cards;
+    }
+
     /// Shuffles `self` in place
     pub fn shuffle<R>(&mut self, rng: &mut R)
     where
@@ -95,6 +104,15 @@ impl<T: Card> Deck<T> {
     /// Returns the number of elements in the deck
     pub fn len(&self) -> usize {
         self.cards.len()
+    }
+
+    /// Returns `true` if the deck contains no elements.
+    pub fn is_empty(&self) -> bool {
+        self.cards.is_empty()
+    }
+
+    pub fn contains(&self, target: &T) -> bool {
+        self.cards.iter().any(|c| c == target)
     }
 }
 

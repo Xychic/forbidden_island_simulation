@@ -124,10 +124,39 @@ impl IslandCardName {
             IslandCardName::CoralPalace => "C P",
         }
     }
+
+    pub fn name(&self) -> String {
+        String::from(match self {
+            IslandCardName::CliffsOfAbandon => "Cliffs Of Abandon",
+            IslandCardName::Watchtower => "Watchtower",
+            IslandCardName::PhantomRock => "Phantom Rock",
+            IslandCardName::LostLagoon => "Lost Lagoon",
+            IslandCardName::MistyMarsh => "Misty Marsh",
+            IslandCardName::TwilightHollow => "Twilight Hollow",
+            IslandCardName::CrimsonForest => "Crimson Forest",
+            IslandCardName::Observatory => "Observatory",
+            IslandCardName::BreakersBridge => "Breakers Bridge",
+            IslandCardName::DunesOfDeception => "Dunes Of Deception",
+            IslandCardName::FoolsLanding => "Fools Landing",
+            IslandCardName::BronzeGate => "Bronze Gate",
+            IslandCardName::GoldGate => "Gold Gate",
+            IslandCardName::SilverGate => "Silver Gate",
+            IslandCardName::CopperGate => "Copper Gate",
+            IslandCardName::IronGate => "Iron Gate",
+            IslandCardName::TempleOfTheSun => "Temple Of The Sun",
+            IslandCardName::TempleOfTheMoon => "Temple Of The Moon",
+            IslandCardName::WhisperingGarden => "Whispering Garden",
+            IslandCardName::HowlingGarden => "Howling Garden",
+            IslandCardName::CaveOfEmbers => "Cave Of Embers",
+            IslandCardName::CaveOfShadows => "Cave Of Shadows",
+            IslandCardName::TidalPalace => "Tidal Palace",
+            IslandCardName::CoralPalace => "Coral Palace",
+        })
+    }
 }
 
 #[allow(dead_code)]
-#[derive(Debug, Clone, Copy)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct IslandCard {
     state: IslandCardState,
     can_retrieve: Option<TreasureType>,
@@ -237,6 +266,10 @@ impl Card for IslandCard {
                 .map(IslandCard::from_name)
                 .collect::<Vec<_>>(),
         )
+    }
+
+    fn as_string(&self) -> String {
+        self.name.name()
     }
 }
 

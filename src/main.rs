@@ -1,38 +1,45 @@
 use std::io::{self, Write};
 
-use rand::SeedableRng;
-use structs::game::moves::ActionStage;
+use rand::{Rng, SeedableRng};
+use structs::game::moves::Action;
 
-use crate::structs::{cards::adventurer::AdventurerCardType, game::Game};
+use crate::structs::game::Game;
 
 #[macro_use]
 mod structs;
 
 fn main() {
-    let mut game = Game::new(rand_chacha::ChaChaRng::seed_from_u64(1), 4, 2);
-
-    dbg!(&game);
-
-    println!("{}", &game.board.show());
-
-    let pos = game
-        .get_adventurer(&AdventurerCardType::Engineer)
-        .unwrap()
-        .pos;
-    game.get_adventurer_mut(&AdventurerCardType::Diver)
-        .unwrap()
-        .pos = pos;
-    game.intial_actions(&AdventurerCardType::Engineer, chooser_2, 3);
+    let mut game = Game::new(rand_chacha::ChaChaRng::seed_from_u64(1), 4, 2, false);
+    println!("{:?}", game.play(chooser));
 }
 
-fn chooser_2(stage: ActionStage, v: &Vec<String>) -> usize {
-    dbg!(stage);
-    dbg!(v);
+fn chooser_2(_stage: Action, v: &Vec<String>) -> usize {
+    let mut guess;
+    loop {
+        // dbg!(&stage);
+        for action in v {
+            println!("{action}");
+        }
+        print!("Pick move: ");
+        io::stdout().flush().unwrap();
+        guess = String::new();
+        io::stdin().read_line(&mut guess).unwrap();
+        if let Ok(res) = guess.trim().parse() {
+            if res > v.len() {
+                println!("[ERROR] number must be less than {}", v.len());
+                continue;
+            }
+            return res;
+        }
+        println!("[ERROR] Not a number");
+    }
+}
 
-    print!("Pick move: ");
-    io::stdout().flush().unwrap();
-
-    let mut guess = String::new();
-    io::stdin().read_line(&mut guess).unwrap();
-    guess.trim().parse().unwrap()
+fn chooser(_stage: Action, v: &Vec<String>) -> usize {
+    // for action in v {
+    //     println!("{action}");
+    // }
+    let num = rand::thread_rng().gen_range(0..v.len());
+    // println!("{num}");
+    num
 }

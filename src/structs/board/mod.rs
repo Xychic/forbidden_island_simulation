@@ -79,11 +79,13 @@ impl Board {
             .join("\n")
     }
 
-    pub fn sink(&mut self, card: &IslandCardName) {
+    pub fn sink(&mut self, card: &IslandCardName) -> bool {
         let (x, y) = *self.locations.get(card).unwrap();
         if let Some(card) = &mut self.board[y][x] {
             (*card).sink();
+            return card.state() == &IslandCardState::Sunk;
         }
+        panic!()
     }
 
     pub fn shore_up(&mut self, &(x, y): &(usize, usize)) {
@@ -96,27 +98,16 @@ impl Board {
         *self.locations.get(card).unwrap()
     }
 
+    pub fn get_by_type(&self, card: &IslandCardName) -> IslandCard {
+        self.get_card(&self.get_location(card)).unwrap()
+    }
+
     pub fn get_card(&self, coord @ &(x, y): &(usize, usize)) -> Option<IslandCard> {
         if ISLAND_COORDS.contains(coord) {
             self.board[y][x]
         } else {
             None
         }
-    }
-
-    pub fn _get_adjacent(&self, card: &IslandCardName) -> Vec<IslandCardName> {
-        let (x, y) = self.get_location(card);
-        [(x + 1, y), (x - 1, y), (x, y + 1), (x, y - 1)]
-            .iter()
-            .filter_map(|coord| {
-                if let Some(card) = self.get_card(coord) {
-                    if *card.state() != IslandCardState::Sunk {
-                        return Some(card.name());
-                    }
-                }
-                None
-            })
-            .collect()
     }
 
     pub fn has_shorable(&self) -> bool {

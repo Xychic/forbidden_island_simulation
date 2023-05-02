@@ -3,7 +3,7 @@ use std::slice::Iter;
 use super::{island::IslandCardName, Card, CardType, Deck};
 
 #[allow(dead_code)]
-#[derive(Debug, Clone)]
+#[derive(Debug, Clone, PartialEq, Eq)]
 pub struct AdventurerCard {
     card_type: AdventurerCardType,
 }
@@ -69,5 +69,9 @@ impl Card for AdventurerCard {
                 .map(AdventurerCard::new)
                 .collect::<Vec<_>>(),
         )
+    }
+
+    fn as_string(&self) -> String {
+        format!("{:?}", self.card_type)
     }
 }

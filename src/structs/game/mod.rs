@@ -5,9 +5,9 @@ use std::collections::HashSet;
 use itertools::Itertools;
 use rand::Rng;
 
-use crate::structs::board::ISLAND_COORDS;
+use crate::structs::{board::ISLAND_COORDS, cards::island::IslandCardName};
 
-use self::moves::{ActionStage, MoveType};
+use self::moves::{Action, MoveType};
 
 use super::{
     board::Board,
@@ -55,14 +55,14 @@ impl Adventurer {
         self.hand.pop_card(index).unwrap()
     }
 
-    pub fn _find_card(&self, card_type: &TreasureCardType) -> Option<usize> {
-        for (i, card) in self.hand.iter().enumerate() {
-            if card.get_type() == card_type {
-                return Some(i);
-            }
-        }
-        None
-    }
+    // pub fn find_card(&self, card_type: &TreasureCardType) -> Option<usize> {
+    //     for (i, card) in self.hand.iter().enumerate() {
+    //         if card.get_type() == card_type {
+    //             return Some(i);
+    //         }
+    //     }
+    //     None
+    // }
 
     pub fn receive_card(&mut self, card: TreasureCard) {
         self.hand.insert(card);
@@ -76,14 +76,15 @@ pub struct Game<R: Rng> {
     pub treasure_discard_deck: Deck<TreasureCard>,
     pub flood_deck: Deck<FloodCard>,
     pub flood_discard_deck: Deck<FloodCard>,
-    pub adventurers: Vec<Adventurer>, // TODO Order of hashmap not consistent
+    pub adventurers: Vec<Adventurer>,
     pub board: Board,
     pub water_level: usize,
     pub captured_treasures: HashSet<TreasureType>,
+    debug: bool,
 }
 
 impl<R: Rng> Game<R> {
-    pub fn new(mut rng: R, adventurers_count: usize, water_level: usize) -> Game<R> {
+    pub fn new(mut rng: R, adventurers_count: usize, water_level: usize, debug: bool) -> Game<R> {
         let mut island_deck = IslandCard::get_deck();
         let mut adventurer_deck = AdventurerCard::get_deck();
 
@@ -145,7 +146,180 @@ impl<R: Rng> Game<R> {
             board,
             water_level,
             captured_treasures: HashSet::with_capacity(4),
+            debug,
         }
+    }
+
+    pub fn play<F: Fn(Action, &Vec<String>) -> usize>(&mut self, player: F) -> (bool, String) {
+        let adventurer_types = self
+            .adventurers
+            .iter()
+            .map(|a| *a.get_type())
+            .enumerate()
+            .collect_vec();
+
+        for (index, adventurer_type) in adventurer_types.iter().cycle() {
+            // Check for winning
+            let fools_landing_pos = self.board.get_location(&IslandCardName::FoolsLanding);
+            if self.captured_treasures.len() == 4
+                && self.adventurers.iter().all(|a| a.pos == fools_landing_pos)
+                && self.adventurers.iter().any(|a| {
+                    a.hand
+                        .contains(&TreasureCard::new(&TreasureCardType::SpecialAction(
+                            SpecialActionType::HelicopterLift,
+                        )))
+                })
+            {
+                return (true, String::from("You captured all 4 treasures and used a helicopter lift card to get off fools landing, you win!"));
+            }
+
+            if self.debug {
+                self.show_state();
+            }
+            // Play up to 3 moves
+            self.initial_actions(adventurer_type, &player, 3);
+            self.adventurers[*index].used_pilot_move = false;
+
+            // Draw 2 Treasure deck cards
+            let (card1, card2) = (self.draw_treasure(), self.draw_treasure());
+            if self.debug {
+                println!(
+                    "\n{:?} picked up a {} card and a {} card\n",
+                    adventurer_type,
+                    &card1.as_string(),
+                    &card2.as_string(),
+                );
+            }
+            let mut water_risen = false;
+            if card1.get_type() == &TreasureCardType::WaterRise {
+                water_risen = true;
+                self.water_level += 1;
+                self.treasure_discard_deck.insert(card1);
+            } else {
+                self.adventurers[*index].receive_card(card1);
+            }
+            if card2.get_type() == &TreasureCardType::WaterRise {
+                water_risen = true;
+                self.water_level += 1;
+                self.treasure_discard_deck.insert(card2);
+            } else {
+                self.adventurers[*index].receive_card(card2);
+            }
+            // Water rise?
+            if water_risen {
+                self.flood_discard_deck.shuffle(&mut self.rng);
+                self.flood_deck.stack_front(&mut self.flood_discard_deck);
+            }
+
+            // Discard to <= 5 cards
+            while self.adventurers[*index].get_card_count() > 5 {
+                self.discard_cards(adventurer_type, &player);
+            }
+
+            // Draw flood cards
+            if self.water_level == 9 {
+                return (false, String::from("\nWater level too high, you lose!\n"));
+            }
+            let flood_card_draw_count = match self.water_level {
+                0 | 1 => 2,
+                2..=4 => 3,
+                5 | 6 => 4,
+                7 | 8 => 5,
+                _ => unreachable!(),
+            };
+
+            for _ in 0..flood_card_draw_count {
+                let flood_card = self.flood_deck.pop_next().unwrap();
+                let island_card = flood_card.get_type();
+                if !self.board.sink(&flood_card.get_type()) {
+                    if self.debug {
+                        println!("{} becomes flooded!", flood_card.as_string());
+                    }
+                    // Discard the card if the card sinks
+                    self.flood_discard_deck.insert(flood_card);
+                } else if self.debug {
+                    println!("{} sinks!", flood_card.as_string());
+                }
+                if self.flood_deck.is_empty() {
+                    self.flood_discard_deck.shuffle(&mut self.rng);
+                    self.flood_deck.stack(&mut self.flood_discard_deck);
+                }
+
+                // Check the game is still playable
+                if island_card == IslandCardName::FoolsLanding
+                    && self.board.get_by_type(&island_card).state() == &IslandCardState::Sunk
+                {
+                    return (false, String::from("\nFools landing sinks, you lose!\n"));
+                }
+                for treasure in TreasureType::iter() {
+                    if !self.captured_treasures.contains(treasure)
+                        && !treasure.retrieved_from().iter().any(|card| {
+                            self.board.get_by_type(card).state() != &IslandCardState::Sunk
+                        })
+                    {
+                        return (
+                            false,
+                            format!("\nCannot retrieve {}, you lose!\n", treasure.get_name()),
+                        );
+                    }
+                }
+
+                // Move players if needs be
+                for i in 0..self.adventurers.len() {
+                    let to_move = &self.adventurers[i];
+                    if self.board.get_card(&to_move.pos).unwrap().state() == &IslandCardState::Sunk
+                    {
+                        if self.debug {
+                            println!(
+                                "{:?} must move off {}",
+                                to_move.get_type(),
+                                self.board.get_card(&to_move.pos).unwrap().as_string()
+                            );
+                        }
+                        if self.get_moves(to_move).is_empty() {
+                            return (
+                                false,
+                                format!(
+                                    "\n{:?} cannot move to safety, you lose!\n",
+                                    to_move.get_type()
+                                ),
+                            );
+                        } else {
+                            let adventurer_type = to_move.get_type().to_owned();
+                            self.move_adventurer_flood(&adventurer_type, &player);
+                        }
+                    }
+                }
+            }
+        }
+        unreachable!()
+    }
+
+    fn draw_treasure(&mut self) -> TreasureCard {
+        let card = self.treasure_deck.pop_next().unwrap();
+        if self.treasure_deck.is_empty() {
+            self.treasure_discard_deck.shuffle(&mut self.rng);
+            self.treasure_deck.stack(&mut self.treasure_discard_deck);
+        }
+        card
+    }
+
+    fn show_state(&self) {
+        let mut to_show = self.board.show();
+        to_show += "\n";
+        for adventurer in &self.adventurers {
+            to_show += &format!(
+                "{:?} ({}): [{}]\n",
+                adventurer.get_type(),
+                self.board.get_card(&adventurer.pos).unwrap().as_string(),
+                adventurer
+                    .get_hand()
+                    .iter()
+                    .map(|c| c.as_string())
+                    .join(", ")
+            );
+        }
+        println!("{to_show}");
     }
 
     pub fn get_adventurer(&self, adventurer_type: &AdventurerCardType) -> Option<&Adventurer> {
@@ -267,12 +441,62 @@ impl<R: Rng> Game<R> {
         })
     }
 
-    pub fn intial_actions<F: Fn(ActionStage, &Vec<String>) -> usize>(
+    fn discard_cards<F: Fn(Action, &Vec<String>) -> usize>(
+        &mut self,
+        adventurer_type: &AdventurerCardType,
+        chooser: F,
+    ) {
+        let mut possible_discards = Vec::new();
+        for (index, card) in self
+            .get_adventurer(adventurer_type)
+            .unwrap()
+            .hand
+            .iter()
+            .enumerate()
+        {
+            let card_type = card.get_type();
+            if let &TreasureCardType::SpecialAction(_) = card_type {
+                possible_discards.push((
+                    (index, true, card_type),
+                    format!("Use {} card", card.as_string()),
+                ));
+            }
+            possible_discards.push((
+                (index, false, card_type),
+                format!("Discard {} card", card.as_string()),
+            ));
+        }
+        let choice = if possible_discards.len() == 1 {
+            0
+        } else {
+            let action_strings: Vec<_> = possible_discards
+                .iter()
+                .enumerate()
+                .map(|(i, (_, s))| (format!("{i}: {s}")))
+                .collect();
+            chooser(Action::DiscardCards, &action_strings)
+        };
+        let (index, use_special, card_type) = possible_discards[choice].0;
+        if use_special {
+            if let TreasureCardType::SpecialAction(t) = card_type {
+                match t {
+                    SpecialActionType::Sandbag => self.sandbag(&chooser),
+                    SpecialActionType::HelicopterLift => self.helicopter_lift(&chooser),
+                }
+            }
+        }
+        self.get_adventurer_mut(adventurer_type)
+            .unwrap()
+            .remove_card(index);
+    }
+
+    fn initial_actions<F: Fn(Action, &Vec<String>) -> usize>(
         &mut self,
         adventurer_type: &AdventurerCardType,
         chooser: F,
         actions_left: usize,
     ) {
+        // TODO add winning state
         if actions_left == 0 {
             return;
         }
@@ -280,11 +504,11 @@ impl<R: Rng> Game<R> {
         let mut intial_choices = Vec::with_capacity(6);
         let adventurer = self.get_adventurer(adventurer_type).unwrap();
         if self.can_move(adventurer) {
-            intial_choices.push((ActionStage::Move, format!("Move {adventurer_type:?}")));
+            intial_choices.push((Action::Move, format!("Move {adventurer_type:?}")));
         }
 
         if self.can_shore_up(adventurer_type, &adventurer.pos) {
-            intial_choices.push((ActionStage::ShoreUp, String::from("Shore up tile")));
+            intial_choices.push((Action::ShoreUp, String::from("Shore up tile")));
         }
 
         if adventurer.get_card_count() != 0
@@ -294,7 +518,7 @@ impl<R: Rng> Game<R> {
                     .iter()
                     .any(|a| a.get_type() != adventurer_type && a.pos == adventurer.pos))
         {
-            intial_choices.push((ActionStage::GiveCard, String::from("Give card")));
+            intial_choices.push((Action::GiveCard, String::from("Give card")));
         }
 
         if let Some(t) = self.board.get_card(&adventurer.pos).unwrap().can_retrieve() {
@@ -307,7 +531,7 @@ impl<R: Rng> Game<R> {
                     >= 4
             {
                 intial_choices.push((
-                    ActionStage::CaptureTreasure(t),
+                    Action::CaptureTreasure(t),
                     format!("Capture {:?}", t.get_name()),
                 ));
             }
@@ -318,38 +542,34 @@ impl<R: Rng> Game<R> {
                 .iter()
                 .any(|c| matches!(c.get_type(), TreasureCardType::SpecialAction(_)))
         }) {
-            intial_choices.push((
-                ActionStage::PlayActionCard,
-                String::from("Play action card"),
-            ));
+            intial_choices.push((Action::PlayActionCard, String::from("Play action card")));
         }
 
-        intial_choices.push((ActionStage::EndTurn, String::from("End turn")));
+        intial_choices.push((Action::EndTurn, String::from("End turn")));
 
         let action_strings: Vec<_> = intial_choices
             .iter()
             .enumerate()
             .map(|(i, (_, s))| (format!("{i}: {s}")))
             .collect();
-        let choice = chooser(ActionStage::Initial, &action_strings);
+        let choice = chooser(Action::Initial, &action_strings);
+
         match intial_choices[choice].0 {
-            ActionStage::Move => self.handle_move(adventurer_type, chooser, actions_left),
-            ActionStage::ShoreUp => self.handle_shore_up(adventurer_type, chooser, actions_left),
-            ActionStage::GiveCard => self.handle_give_card(adventurer_type, chooser, actions_left),
-            ActionStage::CaptureTreasure(t) => {
-                self.handle_capture_treasure(adventurer_type, t, chooser, actions_left)
+            Action::Move => self.move_adventurer(adventurer_type, chooser, actions_left),
+            Action::ShoreUp => self.shore_up(adventurer_type, chooser, actions_left),
+            Action::GiveCard => self.give_card(adventurer_type, chooser, actions_left),
+            Action::CaptureTreasure(t) => {
+                self.capture_treasure(adventurer_type, t, chooser, actions_left)
             }
-            ActionStage::PlayActionCard => {
-                self.play_action_card(adventurer_type, chooser, actions_left)
-            }
-            ActionStage::EndTurn => {
+            Action::PlayActionCard => self.play_action_card(adventurer_type, chooser, actions_left),
+            Action::EndTurn => {
                 // DO NOTHING
             }
             _ => unreachable!(),
         }
     }
 
-    fn handle_move<F: Fn(ActionStage, &Vec<String>) -> usize>(
+    fn move_adventurer<F: Fn(Action, &Vec<String>) -> usize>(
         &mut self,
         adventurer_type: &AdventurerCardType,
         chooser: F,
@@ -366,13 +586,17 @@ impl<R: Rng> Game<R> {
                     MoveType::PilotMove(pos),
                     format!(
                         "Use Pilot skill to move to {:?}",
-                        self.board.get_card(&pos).unwrap().name()
+                        self.board.get_card(&pos).unwrap().as_string()
                     ),
                 ));
             } else {
                 actions.push((
                     MoveType::Move(pos),
-                    format!("Move to {:?}", self.board.get_card(&pos).unwrap().name()),
+                    format!(
+                        "Move {:?} to {:?}",
+                        adventurer_type,
+                        self.board.get_card(&pos).unwrap().as_string()
+                    ),
                 ));
             }
         }
@@ -391,7 +615,7 @@ impl<R: Rng> Game<R> {
                         format!(
                             "Move {:?} to {:?}",
                             t,
-                            self.board.get_card(&pos).unwrap().name()
+                            self.board.get_card(&pos).unwrap().as_string()
                         ),
                     ));
                 }
@@ -406,7 +630,7 @@ impl<R: Rng> Game<R> {
                 .enumerate()
                 .map(|(i, (_, s))| (format!("{i}: {s}")))
                 .collect();
-            chooser(ActionStage::Move, &action_strings)
+            chooser(Action::Move, &action_strings)
         };
 
         match actions[choice].0 {
@@ -418,10 +642,75 @@ impl<R: Rng> Game<R> {
                 adventurer.used_pilot_move = true;
             }
         }
-        self.intial_actions(adventurer_type, chooser, actions_left - 1);
+        self.initial_actions(adventurer_type, chooser, actions_left - 1);
     }
 
-    fn handle_shore_up<F: Fn(ActionStage, &Vec<String>) -> usize>(
+    fn move_adventurer_flood<F: Fn(Action, &Vec<String>) -> usize>(
+        &mut self,
+        adventurer_type: &AdventurerCardType,
+        chooser: F,
+    ) {
+        let adventurer = self.get_adventurer(adventurer_type).unwrap();
+        let mut actions = Vec::new();
+        let (x, y) = adventurer.pos;
+        // Move
+
+        let move_options = match adventurer_type {
+            AdventurerCardType::Pilot => Vec::from(ISLAND_COORDS),
+            AdventurerCardType::Explorer => vec![
+                (x + 1, y + 1),
+                (x, y + 1),
+                (x - 1, y + 1),
+                (x + 1, y),
+                (x - 1, y),
+                (x + 1, y - 1),
+                (x, y - 1),
+                (x - 1, y - 1),
+            ],
+            _ => vec![(x, y + 1), (x - 1, y), (x + 1, y), (x, y - 1)],
+        };
+        let mut possible_moves = move_options
+            .iter()
+            .filter(|&pos @ &(px, py)| {
+                pos != &(x, y)
+                    && ISLAND_COORDS.contains(pos)
+                    && (self.board.get_card(&(px, py)).unwrap().state() != &IslandCardState::Sunk)
+            })
+            .collect_vec();
+        if possible_moves.is_empty() && adventurer_type == &AdventurerCardType::Diver {
+            possible_moves.push(
+                ISLAND_COORDS
+                    .iter()
+                    .sorted_by_key(|(px, py)| px.abs_diff(x) + py.abs_diff(y))
+                    .find(|pos| self.board.get_card(pos).unwrap().state() != &IslandCardState::Sunk)
+                    .unwrap(),
+            );
+        }
+        for pos in possible_moves {
+            actions.push((
+                pos,
+                format!(
+                    "Move {:?} to {:?}",
+                    adventurer_type,
+                    self.board.get_card(pos).unwrap().as_string()
+                ),
+            ));
+        }
+
+        let choice = if actions.len() == 1 {
+            0
+        } else {
+            let action_strings: Vec<_> = actions
+                .iter()
+                .enumerate()
+                .map(|(i, (_, s))| (format!("{i}: {s}")))
+                .collect();
+            chooser(Action::Move, &action_strings)
+        };
+        self.get_adventurer_mut(adventurer_type).unwrap().pos = *actions[choice].0;
+    }
+
+    fn shore_up<F: Fn(Action, &Vec<String>) -> usize>(
         &mut self,
         adventurer_type: &AdventurerCardType,
         chooser: F,
@@ -434,26 +723,26 @@ impl<R: Rng> Game<R> {
         {
             let actions = vec![
                 (
-                    ActionStage::ShoreUp,
+                    Action::ShoreUp,
                     "Use engineer skill to shore up another tile",
                 ),
-                (ActionStage::EndAction, "End action"),
+                (Action::EndAction, "End action"),
             ];
             let action_strings: Vec<_> = actions
                 .iter()
                 .enumerate()
                 .map(|(i, (_, s))| (format!("{i}: {s}")))
                 .collect();
-            let choice = chooser(ActionStage::ShoreUp, &action_strings);
+            let choice = chooser(Action::ShoreUp, &action_strings);
             match actions[choice].0 {
-                ActionStage::ShoreUp => self.shore_up_sub(adventurer_type, &chooser),
-                ActionStage::EndAction => {}
+                Action::ShoreUp => self.shore_up_sub(adventurer_type, &chooser),
+                Action::EndAction => {}
                 _ => unreachable!(),
             }
         }
-        self.intial_actions(adventurer_type, chooser, actions_left - 1);
+        self.initial_actions(adventurer_type, chooser, actions_left - 1);
     }
-    fn shore_up_sub<F: Fn(ActionStage, &Vec<String>) -> usize>(
+    fn shore_up_sub<F: Fn(Action, &Vec<String>) -> usize>(
         &mut self,
         adventurer_type: &AdventurerCardType,
         chooser: F,
@@ -463,7 +752,10 @@ impl<R: Rng> Game<R> {
         for pos in self.get_shorable(&adventurer.card, &adventurer.pos) {
             actions.push((
                 pos,
-                format!("Shore up {:?}", self.board.get_card(&pos).unwrap().name()),
+                format!(
+                    "Shore up {:?}",
+                    self.board.get_card(&pos).unwrap().as_string()
+                ),
             ));
         }
 
@@ -475,11 +767,11 @@ impl<R: Rng> Game<R> {
                 .enumerate()
                 .map(|(i, (_, s))| (format!("{i}: {s}")))
                 .collect();
-            chooser(ActionStage::Move, &action_strings)
+            chooser(Action::ShoreUp, &action_strings)
         };
         self.board.shore_up(&actions[choice].0);
     }
-    fn handle_give_card<F: Fn(ActionStage, &Vec<String>) -> usize>(
+    fn give_card<F: Fn(Action, &Vec<String>) -> usize>(
         &mut self,
         adventurer_type: &AdventurerCardType,
         chooser: F,
@@ -512,7 +804,7 @@ impl<R: Rng> Game<R> {
                 .enumerate()
                 .map(|(i, (_, s))| (format!("{i}: {s}")))
                 .collect();
-            chooser(ActionStage::Move, &action_strings)
+            chooser(Action::GiveCard, &action_strings)
         };
         let (card_index, reciever_type) = actions[choice].0;
         let card = self
@@ -523,13 +815,13 @@ impl<R: Rng> Game<R> {
             .unwrap()
             .receive_card(card);
 
-        self.intial_actions(adventurer_type, chooser, actions_left - 1);
+        self.initial_actions(adventurer_type, chooser, actions_left - 1);
     }
 
-    fn handle_capture_treasure<F: Fn(ActionStage, &Vec<String>) -> usize>(
+    fn capture_treasure<F: Fn(Action, &Vec<String>) -> usize>(
         &mut self,
         adventurer_type: &AdventurerCardType,
-        treausre_type: TreasureType,
+        treasure_type: TreasureType,
         chooser: F,
         actions_left: usize,
     ) {
@@ -537,18 +829,18 @@ impl<R: Rng> Game<R> {
         let mut new_deck = Deck::with_capacity(1);
         let mut taken = 0;
         for card in adventurer.hand.iter() {
-            if taken < 4 && card.get_type() == &TreasureCardType::Treasure(treausre_type) {
+            if taken < 4 && card.get_type() == &TreasureCardType::Treasure(treasure_type) {
                 taken += 1;
             } else {
                 new_deck.insert(card.to_owned());
             }
         }
         adventurer.hand = new_deck;
-        self.captured_treasures.insert(treausre_type);
-        self.intial_actions(adventurer_type, chooser, actions_left - 1);
+        self.captured_treasures.insert(treasure_type);
+        self.initial_actions(adventurer_type, chooser, actions_left - 1);
     }
 
-    fn play_action_card<F: Fn(ActionStage, &Vec<String>) -> usize>(
+    fn play_action_card<F: Fn(Action, &Vec<String>) -> usize>(
         &mut self,
         adventurer_type: &AdventurerCardType,
         chooser: F,
@@ -587,7 +879,7 @@ impl<R: Rng> Game<R> {
                 .enumerate()
                 .map(|(i, (_, s))| (format!("{i}: {s}")))
                 .collect();
-            chooser(ActionStage::Move, &action_strings)
+            chooser(Action::PlayActionCard, &action_strings)
         };
 
         let (adventurer, card_index, card_type) = actions[choice].0;
@@ -600,10 +892,10 @@ impl<R: Rng> Game<R> {
             SpecialActionType::HelicopterLift => self.helicopter_lift(&chooser),
         }
 
-        self.intial_actions(adventurer_type, chooser, actions_left);
+        self.initial_actions(adventurer_type, chooser, actions_left);
     }
 
-    fn sandbag<F: Fn(ActionStage, &Vec<String>) -> usize>(&mut self, chooser: F) {
+    fn sandbag<F: Fn(Action, &Vec<String>) -> usize>(&mut self, chooser: F) {
         let shorable = self.board.get_shorable();
         let actions: Vec<_> = shorable
             .iter()
@@ -617,13 +909,13 @@ impl<R: Rng> Game<R> {
                 .enumerate()
                 .map(|(i, (_, s))| (format!("{i}: {s}")))
                 .collect();
-            chooser(ActionStage::Sandbag, &action_strings)
+            chooser(Action::Sandbag, &action_strings)
         };
         self.board
             .shore_up(&self.board.get_location(actions[choice].0));
     }
 
-    fn helicopter_lift<F: Fn(ActionStage, &Vec<String>) -> usize>(&mut self, chooser: F) {
+    fn helicopter_lift<F: Fn(Action, &Vec<String>) -> usize>(&mut self, chooser: F) {
         let mut states = Vec::new();
         for (key, group) in &self
             .adventurers
@@ -634,7 +926,7 @@ impl<R: Rng> Game<R> {
             let dests = ISLAND_COORDS
                 .iter()
                 .filter(|pos| {
-                    self.board.get_card(pos).unwrap().state() != &IslandCardState::Flooded
+                    self.board.get_card(pos).unwrap().state() != &IslandCardState::Sunk
                         && **pos != key
                 })
                 .collect_vec();
@@ -657,7 +949,7 @@ impl<R: Rng> Game<R> {
                     format!(
                         "Move {} to {:?}",
                         who.iter().map(|a| format!("{a:?}")).join(", "),
-                        self.board.get_card(&pos).unwrap().name()
+                        self.board.get_card(&pos).unwrap().as_string()
                     ),
                 )
             })
@@ -671,7 +963,7 @@ impl<R: Rng> Game<R> {
                 .enumerate()
                 .map(|(i, (_, s))| (format!("{i}: {s}")))
                 .collect();
-            chooser(ActionStage::HelicopterLift, &action_strings)
+            chooser(Action::HelicopterLift, &action_strings)
         };
         let (pos, who) = &actions[choice].0;
         for a in who {
