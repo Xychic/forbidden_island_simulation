@@ -201,10 +201,13 @@ mod tests {
     fn test_fn_adventurer_new() {
         let mut island_deck = IslandCard::get_deck();
         let board = Board::new(&mut island_deck);
-        assert_eq!(Adventurer {
-            card: AdventurerCardType::Explorer,
-            pos: board.get_location(&IslandCardName::CopperGate),
-            hand: Deck::with_capacity(10),
-        }, Adventurer::new(AdventurerCard::new(&AdventurerCardType::Explorer), &board));
+        assert_eq!(
+            Adventurer {
+                card: AdventurerCardType::Explorer,
+                pos: board.get_location(&IslandCardName::CopperGate),
+                hand: Deck::with_capacity(10),
+            },
+            Adventurer::new(AdventurerCard::new(&AdventurerCardType::Explorer), &board)
+        );
     }
 }
