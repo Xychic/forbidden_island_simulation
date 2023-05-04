@@ -1,11 +1,16 @@
-#!/bin/bash
-#SBATCH --job-name=FIS_16
+
+
+for i in range(32):
+    job = i+1
+    open(f"{job}.job", "w").write(f"""#!/bin/bash
+#SBATCH --job-name=FIS_{job}
 #SBATCH --time=00:10:00                 # Maximum time (HH:MM:SS)
 #SBATCH --ntasks=32                      # run on a single CPU
 #SBATCH --mem=100mb                       # reserve 1GB memory for job
-#SBATCH --output=./16.log                 # standard output and error log
+#SBATCH --output=./{job}.log                 # standard output and error log
 #SBATCH --partition=teach               # run in the teaching queue
 #SBATCH --nodes=1
 
-echo 16
-./forbidden_island_simulation -g 800000 -t 16
+echo {job}
+./forbidden_island_simulation -g 800000 -t {job}
+""")

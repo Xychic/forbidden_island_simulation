@@ -1,11 +1,11 @@
 #!/bin/bash
-#SBATCH --job-name=FIS_16
+#SBATCH --job-name=FIS_5
 #SBATCH --time=00:10:00                 # Maximum time (HH:MM:SS)
 #SBATCH --ntasks=32                      # run on a single CPU
 #SBATCH --mem=100mb                       # reserve 1GB memory for job
-#SBATCH --output=./16.log                 # standard output and error log
+#SBATCH --output=./5.log                 # standard output and error log
 #SBATCH --partition=teach               # run in the teaching queue
 #SBATCH --nodes=1
 
-echo 16
-./forbidden_island_simulation -g 800000 -t 16
+echo 5
+./forbidden_island_simulation -g 800000 -t 5
