@@ -1,0 +1,121 @@
+1
+Rate: 25,209 rounds/s	342,232
+Rate: 25,210 rounds/s	346,885
+Rate: 25,203 rounds/s	351,484
+Rate: 25,201 rounds/s	356,138
+Rate: 25,203 rounds/s	360,812
+Rate: 25,202 rounds/s	365,471
+Rate: 25,206 rounds/s	370,195
+Rate: 25,209 rounds/s	374,870
+Rate: 25,208 rounds/s	379,443
+Rate: 25,211 rounds/s	384,140
+Rate: 25,208 rounds/s	388,696
+Rate: 25,210 rounds/s	393,326
+Rate: 25,213 rounds/s	397,989
+Rate: 25,212 rounds/s	402,667
+Rate: 25,216 rounds/s	407,364
+Rate: 25,217 rounds/s	412,018
+Rate: 25,216 rounds/s	416,657
+Rate: 25,218 rounds/s	421,273
+Rate: 25,214 rounds/s	425,776
+Rate: 25,216 rounds/s	430,446
+Rate: 25,218 rounds/s	435,096
+Rate: 25,222 rounds/s	439,751
+Rate: 25,221 rounds/s	444,422
+Rate: 25,221 rounds/s	449,077
+Rate: 25,223 rounds/s	453,751
+Rate: 25,219 rounds/s	458,305
+Rate: 25,219 rounds/s	462,941
+Rate: 25,221 rounds/s	467,616
+Rate: 25,222 rounds/s	472,223
+Rate: 25,222 rounds/s	476,817
+Rate: 25,223 rounds/s	481,469
+Rate: 25,213 rounds/s	485,888
+Rate: 25,208 rounds/s	490,465
+Rate: 25,199 rounds/s	494,915
+Rate: 25,194 rounds/s	499,437
+Rate: 25,189 rounds/s	504,070
+Rate: 25,190 rounds/s	508,678
+Rate: 25,193 rounds/s	513,360
+Rate: 25,192 rounds/s	517,952
+Rate: 25,195 rounds/s	522,604
+Rate: 25,194 rounds/s	527,336
+Rate: 25,196 rounds/s	531,978
+Rate: 25,199 rounds/s	536,630
+Rate: 25,201 rounds/s	541,331
+Rate: 25,202 rounds/s	545,995
+Rate: 25,203 rounds/s	550,637
+Rate: 25,204 rounds/s	555,261
+Rate: 25,206 rounds/s	559,882
+Rate: 25,207 rounds/s	564,594
+Rate: 25,206 rounds/s	569,200
+Rate: 25,198 rounds/s	573,708
+Rate: 25,189 rounds/s	578,162
+Rate: 25,190 rounds/s	582,835
+Rate: 25,190 rounds/s	587,458
+Rate: 25,191 rounds/s	592,154
+Rate: 25,191 rounds/s	596,810
+Rate: 25,191 rounds/s	601,451
+Rate: 25,192 rounds/s	606,113
+Rate: 25,190 rounds/s	610,713
+Rate: 25,191 rounds/s	615,386
+Rate: 25,191 rounds/s	620,023
+Rate: 25,191 rounds/s	624,713
+Rate: 25,193 rounds/s	629,331
+Rate: 25,192 rounds/s	633,998
+Rate: 25,190 rounds/s	638,554
+Rate: 25,192 rounds/s	643,196
+Rate: 25,194 rounds/s	647,882
+Rate: 25,195 rounds/s	652,530
+Rate: 25,198 rounds/s	657,205
+Rate: 25,200 rounds/s	661,879
+Rate: 25,201 rounds/s	666,601
+Rate: 25,200 rounds/s	671,189
+Rate: 25,201 rounds/s	675,940
+Rate: 25,200 rounds/s	680,540
+Rate: 25,203 rounds/s	685,185
+Rate: 25,206 rounds/s	689,874
+Rate: 25,206 rounds/s	694,546
+Rate: 25,206 rounds/s	699,194
+Rate: 25,207 rounds/s	703,827
+Rate: 25,206 rounds/s	708,457
+Rate: 25,207 rounds/s	713,106
+Rate: 25,209 rounds/s	717,830
+Rate: 25,208 rounds/s	722,445
+Rate: 25,209 rounds/s	727,136
+Rate: 25,210 rounds/s	731,846
+Rate: 25,209 rounds/s	736,404
+Rate: 25,209 rounds/s	741,067
+Rate: 25,208 rounds/s	745,656
+Rate: 25,207 rounds/s	750,270
+Rate: 25,209 rounds/s	754,874
+Rate: 25,209 rounds/s	759,488
+Rate: 25,209 rounds/s	764,138
+Rate: 25,208 rounds/s	768,790
+Rate: 25,201 rounds/s	773,205
+Rate: 25,196 rounds/s	777,725
+Rate: 25,197 rounds/s	782,415
+Rate: 25,197 rounds/s	787,050
+Rate: 25,197 rounds/s	791,670
+Rate: 25,199 rounds/s	796,308
+Rate: 25,316 rounds/s	800,000
+
+============================
+ Job utilisation efficiency
+============================
+
+Job ID: 23204322
+Cluster: viking
+User/Group: jht517/clusterusers
+State: COMPLETED (exit code 0)
+Nodes: 1
+Cores per node: 32
+CPU Utilized: 00:02:52
+CPU Efficiency: 3.07% of 01:33:20 core-walltime
+Job Wall-clock time: 00:02:55
+Memory Utilized: 3.02 MB
+Memory Efficiency: 3.02% of 100.00 MB
+ Requested wall clock time: 00:10:00
+    Actual wall clock time: 00:02:55
+Wall clock time efficiency: 29.2%
+           Job queued time: 00:00:06
