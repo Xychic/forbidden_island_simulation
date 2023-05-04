@@ -6,5 +6,5 @@ do
     do
         sleep 0.05
     done
-    ./$i.job
+    sbatch ./$i.job
 done
