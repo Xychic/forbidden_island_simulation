@@ -1,23 +1,22 @@
 9
-Rate: 184,107 rounds/s	34,060Rate: 195,559 rounds/s	71,939Rate: 199,758 rounds/s	110,277Rate: 202,180 rounds/s	148,876Rate: 203,288 rounds/s	186,894Rate: 204,358 rounds/s	225,258Rate: 205,289 rounds/s	263,939Rate: 205,463 rounds/s	301,858Rate: 205,712 rounds/s	340,033Rate: 206,144 rounds/s	378,499Rate: 206,505 rounds/s	417,161Rate: 206,573 rounds/s	455,321Rate: 206,602 rounds/s	493,502Rate: 206,613 rounds/s	531,425Rate: 206,261 rounds/s	568,554Rate: 206,059 rounds/s	606,014Rate: 206,240 rounds/s	644,343Rate: 206,257 rounds/s	682,284Rate: 206,417 rounds/s	720,747Rate: 206,399 rounds/s	758,666Rate: 199,894 rounds/s	771,464Rate: 190,808 rounds/s	771,464Rate: 197,827 rounds/s	800,000
+Rate: 119,942 rounds/s	22,082Rate: 195,619 rounds/s	71,790Rate: 197,530 rounds/s	108,868Rate: 199,241 rounds/s	146,315Rate: 200,294 rounds/s	183,883Rate: 201,123 rounds/s	221,638Rate: 201,819 rounds/s	259,656Rate: 202,563 rounds/s	297,905Rate: 203,182 rounds/s	336,266Rate: 203,569 rounds/s	374,466Rate: 204,124 rounds/s	412,962Rate: 204,656 rounds/s	451,696Rate: 204,753 rounds/s	489,617Rate: 205,105 rounds/s	528,157Rate: 205,134 rounds/s	566,029Rate: 205,274 rounds/s	604,224Rate: 205,386 rounds/s	642,188Rate: 205,461 rounds/s	680,162Rate: 205,670 rounds/s	718,691Rate: 205,891 rounds/s	757,411Rate: 206,021 rounds/s	795,642Rate: 206,213 rounds/s	834,183Rate: 206,215 rounds/s	872,024Rate: 206,204 rounds/s	909,949Rate: 206,247 rounds/s	948,092Rate: 206,357 rounds/s	986,653Rate: 206,489 rounds/s	1,025,282Rate: 206,527 rounds/s	1,063,518Rate: 206,557 rounds/s	1,101,760Rate: 206,529 rounds/s	1,139,566Rate: 206,633 rounds/s	1,177,979Rate: 206,694 rounds/s	1,216,171Rate: 206,683 rounds/s	1,254,150Rate: 206,752 rounds/s	1,292,703Rate: 206,787 rounds/s	1,330,960Rate: 206,821 rounds/s	1,369,177Rate: 206,773 rounds/s	1,407,131Rate: 206,871 rounds/s	1,445,810Rate: 206,906 rounds/s	1,484,059Rate: 206,968 rounds/s	1,522,653Rate: 206,942 rounds/s	1,560,624Rate: 206,947 rounds/s	1,598,777Rate: 206,983 rounds/s	1,637,087Rate: 207,027 rounds/s	1,675,491Rate: 207,022 rounds/s	1,713,655Rate: 207,078 rounds/s	1,752,152Rate: 207,124 rounds/s	1,790,588Rate: 207,175 rounds/s	1,829,147Rate: 207,180 rounds/s	1,867,238Rate: 207,263 rounds/s	1,906,106Rate: 207,288 rounds/s	1,944,441Rate: 207,308 rounds/s	1,982,562Rate: 207,285 rounds/s	2,020,325Rate: 207,282 rounds/s	2,058,176Rate: 207,318 rounds/s	2,096,693Rate: 207,317 rounds/s	2,134,798Rate: 207,311 rounds/s	2,172,821Rate: 207,343 rounds/s	2,211,177Rate: 207,346 rounds/s	2,249,153Rate: 207,390 rounds/s	2,287,761Rate: 207,391 rounds/s	2,325,972Rate: 207,388 rounds/s	2,364,103Rate: 207,133 rounds/s	2,399,312Rate: 207,037 rounds/s	2,436,407Rate: 207,007 rounds/s	2,473,939Rate: 207,008 rounds/s	2,511,981Rate: 207,043 rounds/s	2,550,418Rate: 207,037 rounds/s	2,588,304Rate: 207,003 rounds/s	2,625,812Rate: 206,973 rounds/s	2,663,485Rate: 206,931 rounds/s	2,701,170Rate: 206,887 rounds/s	2,738,551Rate: 206,893 rounds/s	2,776,621Rate: 206,856 rounds/s	2,814,119Rate: 206,832 rounds/s	2,851,698Rate: 206,866 rounds/s	2,890,059Rate: 206,871 rounds/s	2,928,247Rate: 206,876 rounds/s	2,966,271Rate: 206,888 rounds/s	3,004,408Rate: 206,891 rounds/s	3,042,398Rate: 206,893 rounds/s	3,080,572Rate: 206,927 rounds/s	3,119,022Rate: 206,950 rounds/s	3,157,420Rate: 206,968 rounds/s	3,195,859Rate: 206,964 rounds/s	3,233,787Rate: 207,002 rounds/s	3,272,441Rate: 207,034 rounds/s	3,311,221Rate: 207,039 rounds/s	3,349,428Rate: 207,039 rounds/s	3,387,344Rate: 207,046 rounds/s	3,425,614Rate: 207,057 rounds/s	3,463,742Rate: 207,079 rounds/s	3,502,108Rate: 207,068 rounds/s	3,539,964Rate: 207,063 rounds/s	3,577,977Rate: 207,105 rounds/s	3,616,534Rate: 207,142 rounds/s	3,654,988Rate: 207,144 rounds/s	3,693,243Rate: 207,168 rounds/s	3,731,700Rate: 207,184 rounds/s	3,769,932Rate: 207,205 rounds/s	3,808,119Rate: 207,203 rounds/s	3,846,088Rate: 207,209 rounds/s	3,884,302Rate: 207,213 rounds/s	3,922,555Rate: 207,232 rounds/s	3,960,953Rate: 207,259 rounds/s	3,999,582Rate: 207,257 rounds/s	4,037,714Rate: 207,238 rounds/s	4,075,287Rate: 207,246 rounds/s	4,113,489Rate: 207,242 rounds/s	4,151,376Rate: 207,255 rounds/s	4,189,713Rate: 207,268 rounds/s	4,227,956Rate: 207,293 rounds/s	4,266,475Rate: 207,296 rounds/s	4,304,548Rate: 207,327 rounds/s	4,343,127Rate: 207,344 rounds/s	4,381,540Rate: 207,343 rounds/s	4,419,839Rate: 207,350 rounds/s	4,457,999Rate: 207,355 rounds/s	4,496,295Rate: 207,365 rounds/s	4,534,447Rate: 207,359 rounds/s	4,572,416Rate: 207,358 rounds/s	4,610,303Rate: 207,356 rounds/s	4,648,361Rate: 207,322 rounds/s	4,685,479Rate: 207,302 rounds/s	4,723,194Rate: 207,280 rounds/s	4,760,814Rate: 207,277 rounds/s	4,798,835Rate: 207,290 rounds/s	4,837,337Rate: 207,295 rounds/s	4,875,463Rate: 207,296 rounds/s	4,913,620Rate: 207,119 rounds/s	4,947,642Rate: 206,067 rounds/s	4,960,442Rate: 205,015 rounds/s	4,972,871Rate: 203,661 rounds/s	4,977,493Rate: 202,141 rounds/s	4,977,493Rate: 203,057 rounds/s	5,000,000
 
 ============================
  Job utilisation efficiency
 ============================
 
-Job ID: 23204394
+Job ID: 23207555
 Cluster: viking
 User/Group: jht517/clusterusers
-State: RUNNING
+State: COMPLETED (exit code 0)
 Nodes: 1
 Cores per node: 32
-CPU Utilized: 00:00:00
-CPU Efficiency: 0.00% of 00:13:20 core-walltime
-Job Wall-clock time: 00:00:25
-Memory Utilized: 0.00 MB (estimated maximum)
-Memory Efficiency: 0.00% of 100.00 MB (100.00 MB/node)
-WARNING: Efficiency statistics may be misleading for RUNNING jobs.
+CPU Utilized: 00:19:39
+CPU Efficiency: 27.29% of 01:12:00 core-walltime
+Job Wall-clock time: 00:02:15
+Memory Utilized: 4.00 MB
+Memory Efficiency: 4.00% of 100.00 MB
  Requested wall clock time: 00:10:00
-    Actual wall clock time: 00:00:24
-Wall clock time efficiency: 4.0%
-           Job queued time: 00:00:09
+    Actual wall clock time: 00:02:15
+Wall clock time efficiency: 22.5%
+           Job queued time: 00:00:35

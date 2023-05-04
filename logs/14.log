@@ -1,22 +1,22 @@
 14
-Rate: 251,801 rounds/s	46,285Rate: 285,229 rounds/s	104,917Rate: 298,100 rounds/s	164,517Rate: 304,678 rounds/s	224,146Rate: 313,178 rounds/s	287,711Rate: 315,014 rounds/s	347,128Rate: 316,594 rounds/s	407,180Rate: 317,790 rounds/s	467,125Rate: 318,728 rounds/s	527,073Rate: 319,326 rounds/s	586,759Rate: 319,630 rounds/s	646,218Rate: 319,952 rounds/s	705,734Rate: 319,925 rounds/s	764,588Rate: 298,667 rounds/s	768,649Rate: 310,929 rounds/s	800,000
+Rate: 292,291 rounds/s	53,983Rate: 309,563 rounds/s	113,895Rate: 315,154 rounds/s	173,942Rate: 317,206 rounds/s	233,342Rate: 318,471 rounds/s	292,678Rate: 319,345 rounds/s	352,224Rate: 319,833 rounds/s	411,846Rate: 320,153 rounds/s	471,023Rate: 320,277 rounds/s	530,404Rate: 320,338 rounds/s	589,789Rate: 320,373 rounds/s	648,682Rate: 320,483 rounds/s	707,747Rate: 320,682 rounds/s	767,230Rate: 320,794 rounds/s	826,551Rate: 320,950 rounds/s	885,812Rate: 321,081 rounds/s	945,285Rate: 321,019 rounds/s	1,004,139Rate: 320,965 rounds/s	1,063,275Rate: 321,069 rounds/s	1,122,492Rate: 321,175 rounds/s	1,181,870Rate: 321,294 rounds/s	1,241,279Rate: 321,337 rounds/s	1,300,590Rate: 321,308 rounds/s	1,359,528Rate: 321,319 rounds/s	1,418,637Rate: 321,281 rounds/s	1,477,603Rate: 321,267 rounds/s	1,536,562Rate: 321,296 rounds/s	1,595,661Rate: 321,299 rounds/s	1,654,654Rate: 320,981 rounds/s	1,712,054Rate: 320,735 rounds/s	1,769,802Rate: 320,463 rounds/s	1,827,110Rate: 320,524 rounds/s	1,886,036Rate: 320,422 rounds/s	1,944,334Rate: 320,242 rounds/s	2,002,113Rate: 320,207 rounds/s	2,060,937Rate: 320,236 rounds/s	2,119,872Rate: 320,191 rounds/s	2,178,368Rate: 320,244 rounds/s	2,237,437Rate: 320,232 rounds/s	2,296,169Rate: 320,237 rounds/s	2,354,728Rate: 320,181 rounds/s	2,412,904Rate: 320,191 rounds/s	2,471,877Rate: 320,076 rounds/s	2,529,596Rate: 320,068 rounds/s	2,588,458Rate: 320,140 rounds/s	2,647,756Rate: 320,200 rounds/s	2,707,174Rate: 320,256 rounds/s	2,766,629Rate: 320,271 rounds/s	2,825,535Rate: 320,233 rounds/s	2,884,082Rate: 320,208 rounds/s	2,942,617Rate: 320,172 rounds/s	3,001,010Rate: 320,130 rounds/s	3,059,346Rate: 320,129 rounds/s	3,117,895Rate: 320,120 rounds/s	3,176,681Rate: 320,088 rounds/s	3,235,282Rate: 320,007 rounds/s	3,293,350Rate: 319,926 rounds/s	3,351,356Rate: 319,952 rounds/s	3,410,472Rate: 319,992 rounds/s	3,469,891Rate: 320,043 rounds/s	3,529,015Rate: 320,082 rounds/s	3,588,204Rate: 320,121 rounds/s	3,647,240Rate: 320,161 rounds/s	3,706,508Rate: 320,229 rounds/s	3,766,337Rate: 320,270 rounds/s	3,825,511Rate: 320,314 rounds/s	3,884,752Rate: 320,349 rounds/s	3,943,871Rate: 320,390 rounds/s	4,003,231Rate: 320,430 rounds/s	4,062,485Rate: 320,475 rounds/s	4,121,894Rate: 320,491 rounds/s	4,181,008Rate: 320,528 rounds/s	4,240,559Rate: 320,564 rounds/s	4,299,880Rate: 320,601 rounds/s	4,359,353Rate: 320,632 rounds/s	4,418,599Rate: 320,626 rounds/s	4,477,549Rate: 320,606 rounds/s	4,536,079Rate: 320,573 rounds/s	4,594,537Rate: 320,522 rounds/s	4,652,780Rate: 320,484 rounds/s	4,711,093Rate: 320,454 rounds/s	4,769,547Rate: 320,421 rounds/s	4,827,773Rate: 320,373 rounds/s	4,886,153Rate: 320,350 rounds/s	4,944,599Rate: 318,405 rounds/s	4,972,886Rate: 314,703 rounds/s	4,972,886Rate: 316,417 rounds/s	5,000,000
 
 ============================
  Job utilisation efficiency
 ============================
 
-Job ID: 23204425
+Job ID: 23207669
 Cluster: viking
 User/Group: jht517/clusterusers
 State: COMPLETED (exit code 0)
 Nodes: 1
 Cores per node: 32
-CPU Utilized: 00:03:09
-CPU Efficiency: 42.19% of 00:07:28 core-walltime
-Job Wall-clock time: 00:00:14
-Memory Utilized: 1.42 MB
-Memory Efficiency: 1.42% of 100.00 MB
+CPU Utilized: 00:19:47
+CPU Efficiency: 43.13% of 00:45:52 core-walltime
+Job Wall-clock time: 00:01:26
+Memory Utilized: 4.49 MB
+Memory Efficiency: 4.49% of 100.00 MB
  Requested wall clock time: 00:10:00
-    Actual wall clock time: 00:00:14
-Wall clock time efficiency: 2.3%
-           Job queued time: 00:00:14
+    Actual wall clock time: 00:01:26
+Wall clock time efficiency: 14.3%
+           Job queued time: 00:00:06

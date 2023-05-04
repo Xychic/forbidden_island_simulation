@@ -1,22 +1,22 @@
 30
-Rate: 539,295 rounds/s	99,111Rate: 567,208 rounds/s	208,349Rate: 576,642 rounds/s	317,801Rate: 577,723 rounds/s	424,595Rate: 578,270 rounds/s	531,191Rate: 581,185 rounds/s	640,473Rate: 583,262 rounds/s	749,782Rate: 510,354 rounds/s	749,782Rate: 544,584 rounds/s	800,000
+Rate: 533,355 rounds/s	97,989Rate: 553,384 rounds/s	203,559Rate: 559,708 rounds/s	308,742Rate: 563,339 rounds/s	413,999Rate: 565,354 rounds/s	519,175Rate: 566,112 rounds/s	623,753Rate: 566,758 rounds/s	728,357Rate: 567,196 rounds/s	833,223Rate: 567,363 rounds/s	937,748Rate: 567,434 rounds/s	1,041,992Rate: 567,694 rounds/s	1,147,002Rate: 567,797 rounds/s	1,251,742Rate: 567,593 rounds/s	1,355,441Rate: 568,381 rounds/s	1,461,863Rate: 569,860 rounds/s	1,570,525Rate: 571,154 rounds/s	1,679,032Rate: 572,312 rounds/s	1,787,626Rate: 573,389 rounds/s	1,896,223Rate: 574,266 rounds/s	2,004,711Rate: 575,123 rounds/s	2,113,471Rate: 575,366 rounds/s	2,220,003Rate: 575,072 rounds/s	2,324,559Rate: 574,894 rounds/s	2,429,516Rate: 574,051 rounds/s	2,531,564Rate: 573,989 rounds/s	2,636,804Rate: 573,939 rounds/s	2,742,075Rate: 573,872 rounds/s	2,847,210Rate: 573,816 rounds/s	2,952,351Rate: 573,811 rounds/s	3,057,979Rate: 573,130 rounds/s	3,159,755Rate: 572,772 rounds/s	3,262,834Rate: 572,818 rounds/s	3,368,199Rate: 572,825 rounds/s	3,473,481Rate: 572,781 rounds/s	3,578,567Rate: 572,745 rounds/s	3,683,875Rate: 572,821 rounds/s	3,789,440Rate: 572,771 rounds/s	3,894,011Rate: 572,794 rounds/s	3,999,266Rate: 572,782 rounds/s	4,104,405Rate: 572,792 rounds/s	4,209,974Rate: 572,803 rounds/s	4,315,213Rate: 572,815 rounds/s	4,420,606Rate: 572,830 rounds/s	4,525,710Rate: 572,804 rounds/s	4,630,844Rate: 572,754 rounds/s	4,735,485Rate: 572,739 rounds/s	4,840,843Rate: 572,770 rounds/s	4,946,224Rate: 560,838 rounds/s	4,946,224Rate: 566,920 rounds/s	5,000,000
 
 ============================
  Job utilisation efficiency
 ============================
 
-Job ID: 23204524
+Job ID: 23207918
 Cluster: viking
 User/Group: jht517/clusterusers
 State: COMPLETED (exit code 0)
 Nodes: 1
 Cores per node: 32
-CPU Utilized: 00:03:43
-CPU Efficiency: 77.43% of 00:04:48 core-walltime
-Job Wall-clock time: 00:00:09
-Memory Utilized: 1.42 MB
-Memory Efficiency: 1.42% of 100.00 MB
+CPU Utilized: 00:23:42
+CPU Efficiency: 92.58% of 00:25:36 core-walltime
+Job Wall-clock time: 00:00:48
+Memory Utilized: 8.27 MB
+Memory Efficiency: 8.27% of 100.00 MB
  Requested wall clock time: 00:10:00
-    Actual wall clock time: 00:00:09
-Wall clock time efficiency: 1.5%
-           Job queued time: 00:00:03
+    Actual wall clock time: 00:00:48
+Wall clock time efficiency: 8.0%
+           Job queued time: 00:00:02

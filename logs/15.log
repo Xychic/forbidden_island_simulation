@@ -1,22 +1,22 @@
 15
-Rate: 303,080 rounds/s	55,686Rate: 322,345 rounds/s	118,237Rate: 329,934 rounds/s	181,819Rate: 332,642 rounds/s	244,433Rate: 335,108 rounds/s	307,676Rate: 336,832 rounds/s	371,225Rate: 337,958 rounds/s	434,515Rate: 338,810 rounds/s	497,978Rate: 338,733 rounds/s	560,400Rate: 339,514 rounds/s	624,170Rate: 339,898 rounds/s	687,283Rate: 339,353 rounds/s	748,325Rate: 314,884 rounds/s	752,216Rate: 292,392 rounds/s	752,216Rate: 310,954 rounds/s	800,000
+Rate: 305,890 rounds/s	56,106Rate: 326,041 rounds/s	119,815Rate: 331,428 rounds/s	182,808Rate: 334,528 rounds/s	245,781Rate: 335,274 rounds/s	307,833Rate: 336,054 rounds/s	370,224Rate: 335,898 rounds/s	431,772Rate: 335,913 rounds/s	493,604Rate: 336,299 rounds/s	556,079Rate: 336,184 rounds/s	617,999Rate: 336,836 rounds/s	680,976Rate: 337,403 rounds/s	744,284Rate: 337,910 rounds/s	807,182Rate: 338,024 rounds/s	869,740Rate: 338,507 rounds/s	933,263Rate: 338,557 rounds/s	995,500Rate: 338,351 rounds/s	1,057,037Rate: 338,611 rounds/s	1,120,029Rate: 338,810 rounds/s	1,183,123Rate: 339,003 rounds/s	1,246,168Rate: 339,185 rounds/s	1,308,964Rate: 339,533 rounds/s	1,372,687Rate: 339,679 rounds/s	1,435,535Rate: 339,763 rounds/s	1,498,402Rate: 339,898 rounds/s	1,561,682Rate: 340,139 rounds/s	1,625,362Rate: 340,404 rounds/s	1,689,049Rate: 340,521 rounds/s	1,752,266Rate: 340,554 rounds/s	1,815,424Rate: 340,592 rounds/s	1,878,190Rate: 340,637 rounds/s	1,940,956Rate: 340,557 rounds/s	2,003,038Rate: 340,376 rounds/s	2,064,598Rate: 340,525 rounds/s	2,128,031Rate: 340,675 rounds/s	2,191,545Rate: 340,638 rounds/s	2,254,037Rate: 340,499 rounds/s	2,315,674Rate: 340,381 rounds/s	2,377,548Rate: 340,193 rounds/s	2,438,784Rate: 340,163 rounds/s	2,501,183Rate: 340,246 rounds/s	2,564,444Rate: 340,193 rounds/s	2,626,560Rate: 340,314 rounds/s	2,689,900Rate: 340,353 rounds/s	2,752,450Rate: 340,434 rounds/s	2,815,626Rate: 340,292 rounds/s	2,877,108Rate: 340,218 rounds/s	2,938,874Rate: 340,229 rounds/s	3,001,335Rate: 340,257 rounds/s	3,064,132Rate: 340,206 rounds/s	3,125,972Rate: 339,582 rounds/s	3,182,719Rate: 339,158 rounds/s	3,241,194Rate: 339,029 rounds/s	3,302,406Rate: 338,947 rounds/s	3,363,946Rate: 338,887 rounds/s	3,425,325Rate: 338,782 rounds/s	3,486,515Rate: 338,659 rounds/s	3,547,469Rate: 338,632 rounds/s	3,609,226Rate: 338,672 rounds/s	3,671,788Rate: 338,594 rounds/s	3,733,248Rate: 338,521 rounds/s	3,794,788Rate: 338,492 rounds/s	3,856,686Rate: 338,363 rounds/s	3,917,196Rate: 338,244 rounds/s	3,978,127Rate: 338,169 rounds/s	4,039,575Rate: 338,186 rounds/s	4,101,746Rate: 338,161 rounds/s	4,163,487Rate: 338,118 rounds/s	4,225,290Rate: 338,108 rounds/s	4,287,200Rate: 338,177 rounds/s	4,350,129Rate: 338,249 rounds/s	4,413,058Rate: 338,289 rounds/s	4,475,760Rate: 338,359 rounds/s	4,538,975Rate: 338,463 rounds/s	4,602,732Rate: 338,533 rounds/s	4,665,619Rate: 338,467 rounds/s	4,727,050Rate: 338,415 rounds/s	4,788,455Rate: 338,352 rounds/s	4,849,749Rate: 338,033 rounds/s	4,907,250Rate: 336,931 rounds/s	4,952,923Rate: 333,355 rounds/s	4,961,593Rate: 329,597 rounds/s	4,966,280Rate: 325,928 rounds/s	4,970,869Rate: 322,047 rounds/s	4,970,869Rate: 323,933 rounds/s	5,000,000
 
 ============================
  Job utilisation efficiency
 ============================
 
-Job ID: 23204426
+Job ID: 23207692
 Cluster: viking
 User/Group: jht517/clusterusers
 State: COMPLETED (exit code 0)
 Nodes: 1
 Cores per node: 32
-CPU Utilized: 00:03:12
-CPU Efficiency: 42.86% of 00:07:28 core-walltime
-Job Wall-clock time: 00:00:14
-Memory Utilized: 1.17 MB
-Memory Efficiency: 1.17% of 100.00 MB
+CPU Utilized: 00:20:03
+CPU Efficiency: 43.71% of 00:45:52 core-walltime
+Job Wall-clock time: 00:01:26
+Memory Utilized: 4.72 MB
+Memory Efficiency: 4.72% of 100.00 MB
  Requested wall clock time: 00:10:00
-    Actual wall clock time: 00:00:14
-Wall clock time efficiency: 2.3%
-           Job queued time: 00:00:14
+    Actual wall clock time: 00:01:26
+Wall clock time efficiency: 14.3%
+           Job queued time: 00:00:24

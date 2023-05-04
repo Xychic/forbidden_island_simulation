@@ -1,22 +1,23 @@
 32
-Rate: 446,594 rounds/s	82,126Rate: 515,050 rounds/s	189,297Rate: 542,706 rounds/s	299,212Rate: 557,569 rounds/s	409,791Rate: 562,442 rounds/s	516,818Rate: 572,097 rounds/s	630,953Rate: 572,863 rounds/s	736,777Rate: 517,251 rounds/s	760,297Rate: 544,303 rounds/s	800,000
+Rate: 515,936 rounds/s	95,061Rate: 572,081 rounds/s	210,358Rate: 592,490 rounds/s	326,627Rate: 598,060 rounds/s	439,658Rate: 600,789 rounds/s	552,154Rate: 602,594 rounds/s	664,453Rate: 604,228 rounds/s	777,010Rate: 605,320 rounds/s	889,493Rate: 605,896 rounds/s	1,001,702Rate: 606,328 rounds/s	1,113,954Rate: 606,290 rounds/s	1,225,416Rate: 605,890 rounds/s	1,335,653Rate: 605,515 rounds/s	1,446,151Rate: 605,420 rounds/s	1,557,077Rate: 605,178 rounds/s	1,667,587Rate: 605,402 rounds/s	1,779,612Rate: 605,693 rounds/s	1,891,783Rate: 605,673 rounds/s	2,003,127Rate: 605,398 rounds/s	2,113,380Rate: 605,069 rounds/s	2,223,697Rate: 604,886 rounds/s	2,334,277Rate: 605,028 rounds/s	2,445,908Rate: 604,745 rounds/s	2,555,948Rate: 604,481 rounds/s	2,665,768Rate: 604,502 rounds/s	2,776,949Rate: 604,307 rounds/s	2,887,054Rate: 604,273 rounds/s	2,997,979Rate: 603,798 rounds/s	3,106,629Rate: 603,868 rounds/s	3,218,138Rate: 604,091 rounds/s	3,330,307Rate: 604,320 rounds/s	3,442,670Rate: 604,607 rounds/s	3,555,277Rate: 604,790 rounds/s	3,667,489Rate: 604,926 rounds/s	3,779,486Rate: 605,110 rounds/s	3,891,902Rate: 605,238 rounds/s	4,003,900Rate: 605,438 rounds/s	4,116,210Rate: 605,594 rounds/s	4,228,628Rate: 605,183 rounds/s	4,337,064Rate: 605,338 rounds/s	4,449,400Rate: 605,502 rounds/s	4,561,814Rate: 605,658 rounds/s	4,673,911Rate: 605,368 rounds/s	4,782,765Rate: 605,553 rounds/s	4,895,385Rate: 599,442 rounds/s	4,956,403Rate: 588,125 rounds/s	4,970,710Rate: 591,587 rounds/s	5,000,000
 
 ============================
  Job utilisation efficiency
 ============================
 
-Job ID: 23204526
+Job ID: 23207931
 Cluster: viking
 User/Group: jht517/clusterusers
-State: COMPLETED (exit code 0)
+State: RUNNING
 Nodes: 1
 Cores per node: 32
-CPU Utilized: 00:03:55
-CPU Efficiency: 56.49% of 00:06:56 core-walltime
-Job Wall-clock time: 00:00:13
-Memory Utilized: 1.42 MB
-Memory Efficiency: 1.42% of 100.00 MB
+CPU Utilized: 00:23:49
+CPU Efficiency: 97.08% of 00:24:32 core-walltime
+Job Wall-clock time: 00:00:46
+Memory Utilized: 8.36 MB
+Memory Efficiency: 8.36% of 100.00 MB
+WARNING: Efficiency statistics may be misleading for RUNNING jobs.
  Requested wall clock time: 00:10:00
-    Actual wall clock time: 00:00:13
-Wall clock time efficiency: 2.2%
-           Job queued time: 00:00:12
+    Actual wall clock time: 00:00:46
+Wall clock time efficiency: 7.7%
+           Job queued time: 00:00:02

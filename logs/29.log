@@ -1,22 +1,22 @@
 29
-Rate: 428,480 rounds/s	78,680Rate: 501,443 rounds/s	184,372Rate: 540,520 rounds/s	298,152Rate: 546,016 rounds/s	401,637Rate: 553,469 rounds/s	508,647Rate: 554,473 rounds/s	611,596Rate: 555,470 rounds/s	714,797Rate: 486,037 rounds/s	714,797Rate: 544,009 rounds/s	800,000
+Rate: 449,344 rounds/s	82,686Rate: 507,137 rounds/s	186,318Rate: 556,797 rounds/s	306,879Rate: 558,659 rounds/s	410,732Rate: 559,733 rounds/s	514,401Rate: 559,865 rounds/s	617,550Rate: 560,301 rounds/s	720,923Rate: 560,562 rounds/s	824,503Rate: 560,826 rounds/s	927,658Rate: 560,810 rounds/s	1,030,657Rate: 561,004 rounds/s	1,134,305Rate: 561,161 rounds/s	1,238,071Rate: 561,302 rounds/s	1,341,463Rate: 561,303 rounds/s	1,444,575Rate: 561,475 rounds/s	1,548,331Rate: 561,554 rounds/s	1,651,896Rate: 561,584 rounds/s	1,755,282Rate: 561,549 rounds/s	1,858,338Rate: 561,517 rounds/s	1,961,655Rate: 561,535 rounds/s	2,065,220Rate: 561,654 rounds/s	2,168,973Rate: 561,578 rounds/s	2,272,006Rate: 561,588 rounds/s	2,375,365Rate: 561,648 rounds/s	2,478,762Rate: 561,659 rounds/s	2,581,899Rate: 561,615 rounds/s	2,684,829Rate: 561,729 rounds/s	2,788,392Rate: 561,720 rounds/s	2,891,732Rate: 561,692 rounds/s	2,995,035Rate: 561,685 rounds/s	3,098,355Rate: 561,727 rounds/s	3,201,676Rate: 561,743 rounds/s	3,304,919Rate: 561,872 rounds/s	3,408,889Rate: 561,860 rounds/s	3,512,309Rate: 561,842 rounds/s	3,615,058Rate: 561,890 rounds/s	3,718,224Rate: 561,909 rounds/s	3,821,796Rate: 561,895 rounds/s	3,924,855Rate: 562,217 rounds/s	4,030,284Rate: 562,600 rounds/s	4,136,451Rate: 562,965 rounds/s	4,242,362Rate: 563,286 rounds/s	4,347,948Rate: 563,467 rounds/s	4,452,943Rate: 563,452 rounds/s	4,556,422Rate: 563,440 rounds/s	4,659,873Rate: 563,392 rounds/s	4,762,832Rate: 563,372 rounds/s	4,866,047Rate: 563,363 rounds/s	4,969,272Rate: 551,866 rounds/s	4,969,272Rate: 555,264 rounds/s	5,000,000
 
 ============================
  Job utilisation efficiency
 ============================
 
-Job ID: 23204509
+Job ID: 23207917
 Cluster: viking
 User/Group: jht517/clusterusers
 State: COMPLETED (exit code 0)
 Nodes: 1
 Cores per node: 32
-CPU Utilized: 00:03:46
-CPU Efficiency: 78.47% of 00:04:48 core-walltime
-Job Wall-clock time: 00:00:09
-Memory Utilized: 1.17 MB
-Memory Efficiency: 1.17% of 100.00 MB
+CPU Utilized: 00:23:17
+CPU Efficiency: 89.09% of 00:26:08 core-walltime
+Job Wall-clock time: 00:00:49
+Memory Utilized: 7.95 MB
+Memory Efficiency: 7.95% of 100.00 MB
  Requested wall clock time: 00:10:00
-    Actual wall clock time: 00:00:09
-Wall clock time efficiency: 1.5%
-           Job queued time: 00:00:26
+    Actual wall clock time: 00:00:49
+Wall clock time efficiency: 8.2%
+           Job queued time: 00:00:02

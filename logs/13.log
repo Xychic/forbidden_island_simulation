@@ -1,22 +1,22 @@
 13
-Rate: 267,603 rounds/s	49,269Rate: 280,757 rounds/s	103,232Rate: 284,382 rounds/s	157,006Rate: 287,873 rounds/s	211,808Rate: 290,483 rounds/s	267,162Rate: 292,388 rounds/s	322,563Rate: 294,086 rounds/s	378,481Rate: 294,931 rounds/s	433,704Rate: 295,919 rounds/s	489,516Rate: 296,374 rounds/s	544,717Rate: 296,574 rounds/s	599,548Rate: 296,768 rounds/s	654,507Rate: 297,012 rounds/s	709,549Rate: 297,331 rounds/s	764,912Rate: 280,510 rounds/s	773,218Rate: 262,978 rounds/s	773,218Rate: 272,068 rounds/s	800,000
+Rate: 266,681 rounds/s	48,992Rate: 284,220 rounds/s	104,391Rate: 289,544 rounds/s	159,579Rate: 291,754 rounds/s	214,553Rate: 292,395 rounds/s	268,929Rate: 293,530 rounds/s	323,687Rate: 294,695 rounds/s	378,956Rate: 295,490 rounds/s	434,266Rate: 295,880 rounds/s	488,948Rate: 296,287 rounds/s	544,183Rate: 296,704 rounds/s	599,410Rate: 296,986 rounds/s	654,720Rate: 297,093 rounds/s	709,562Rate: 297,377 rounds/s	764,906Rate: 297,628 rounds/s	820,297Rate: 297,687 rounds/s	875,411Rate: 297,683 rounds/s	930,300Rate: 297,707 rounds/s	984,884Rate: 297,746 rounds/s	1,039,862Rate: 296,816 rounds/s	1,091,424Rate: 296,270 rounds/s	1,143,732Rate: 296,468 rounds/s	1,198,759Rate: 296,679 rounds/s	1,254,160Rate: 296,871 rounds/s	1,309,491Rate: 296,963 rounds/s	1,364,165Rate: 297,110 rounds/s	1,419,457Rate: 297,217 rounds/s	1,474,761Rate: 297,350 rounds/s	1,530,124Rate: 297,391 rounds/s	1,584,986Rate: 297,524 rounds/s	1,640,500Rate: 297,635 rounds/s	1,695,822Rate: 297,728 rounds/s	1,751,182Rate: 297,760 rounds/s	1,806,054Rate: 297,775 rounds/s	1,860,824Rate: 297,862 rounds/s	1,916,047Rate: 297,937 rounds/s	1,971,290Rate: 297,949 rounds/s	2,026,148Rate: 298,020 rounds/s	2,081,324Rate: 298,106 rounds/s	2,136,623Rate: 298,186 rounds/s	2,191,890Rate: 298,209 rounds/s	2,246,708Rate: 298,277 rounds/s	2,301,757Rate: 298,358 rounds/s	2,357,217Rate: 298,414 rounds/s	2,412,420Rate: 298,430 rounds/s	2,467,416Rate: 298,494 rounds/s	2,522,721Rate: 298,510 rounds/s	2,577,638Rate: 298,549 rounds/s	2,632,792Rate: 298,556 rounds/s	2,687,304Rate: 298,591 rounds/s	2,742,618Rate: 298,636 rounds/s	2,797,804Rate: 298,665 rounds/s	2,852,841Rate: 298,666 rounds/s	2,907,709Rate: 298,712 rounds/s	2,963,032Rate: 298,769 rounds/s	3,018,721Rate: 298,795 rounds/s	3,073,913Rate: 298,795 rounds/s	3,129,060Rate: 298,803 rounds/s	3,184,052Rate: 298,817 rounds/s	3,239,120Rate: 298,864 rounds/s	3,294,543Rate: 298,824 rounds/s	3,349,044Rate: 298,872 rounds/s	3,404,447Rate: 298,874 rounds/s	3,459,458Rate: 298,801 rounds/s	3,513,575Rate: 298,781 rounds/s	3,568,372Rate: 298,806 rounds/s	3,623,677Rate: 298,832 rounds/s	3,679,052Rate: 298,859 rounds/s	3,734,439Rate: 298,845 rounds/s	3,789,291Rate: 298,835 rounds/s	3,844,056Rate: 298,862 rounds/s	3,899,205Rate: 298,880 rounds/s	3,954,311Rate: 298,848 rounds/s	4,008,750Rate: 298,872 rounds/s	4,063,968Rate: 298,888 rounds/s	4,119,352Rate: 298,912 rounds/s	4,174,642Rate: 298,900 rounds/s	4,229,278Rate: 298,895 rounds/s	4,283,993Rate: 298,873 rounds/s	4,338,582Rate: 298,633 rounds/s	4,389,890Rate: 298,632 rounds/s	4,444,973Rate: 298,664 rounds/s	4,500,462Rate: 298,693 rounds/s	4,555,744Rate: 298,720 rounds/s	4,611,107Rate: 298,699 rounds/s	4,665,512Rate: 298,719 rounds/s	4,720,723Rate: 298,752 rounds/s	4,776,084Rate: 298,781 rounds/s	4,831,535Rate: 298,790 rounds/s	4,886,541Rate: 298,804 rounds/s	4,941,512Rate: 297,279 rounds/s	4,971,031Rate: 294,320 rounds/s	4,975,652Rate: 291,156 rounds/s	4,975,652Rate: 292,580 rounds/s	5,000,000
 
 ============================
  Job utilisation efficiency
 ============================
 
-Job ID: 23204414
+Job ID: 23207668
 Cluster: viking
 User/Group: jht517/clusterusers
 State: COMPLETED (exit code 0)
 Nodes: 1
 Cores per node: 32
-CPU Utilized: 00:03:10
-CPU Efficiency: 37.11% of 00:08:32 core-walltime
-Job Wall-clock time: 00:00:16
-Memory Utilized: 1.17 MB
-Memory Efficiency: 1.17% of 100.00 MB
+CPU Utilized: 00:19:41
+CPU Efficiency: 39.26% of 00:50:08 core-walltime
+Job Wall-clock time: 00:01:34
+Memory Utilized: 6.46 MB
+Memory Efficiency: 6.46% of 100.00 MB
  Requested wall clock time: 00:10:00
-    Actual wall clock time: 00:00:16
-Wall clock time efficiency: 2.7%
-           Job queued time: 00:00:14
+    Actual wall clock time: 00:01:34
+Wall clock time efficiency: 15.7%
+           Job queued time: 00:00:04
