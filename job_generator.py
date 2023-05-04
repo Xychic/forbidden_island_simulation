@@ -7,10 +7,10 @@ for i in range(32):
 #SBATCH --time=00:10:00                 # Maximum time (HH:MM:SS)
 #SBATCH --ntasks=32                      # run on a single CPU
 #SBATCH --mem=100mb                       # reserve 1GB memory for job
-#SBATCH --output=./{job}.log                 # standard output and error log
+#SBATCH --output=./logs/{job}.log                 # standard output and error log
 #SBATCH --partition=teach               # run in the teaching queue
 #SBATCH --nodes=1
 
 echo {job}
-./forbidden_island_simulation -g 800000 -t {job}
+./forbidden_island_simulation -g 5000000 -t {job}
 """)

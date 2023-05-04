@@ -1,22 +1,0 @@
-32
-Rate: 446,594 rounds/s	82,126Rate: 515,050 rounds/s	189,297Rate: 542,706 rounds/s	299,212Rate: 557,569 rounds/s	409,791Rate: 562,442 rounds/s	516,818Rate: 572,097 rounds/s	630,953Rate: 572,863 rounds/s	736,777Rate: 517,251 rounds/s	760,297Rate: 544,303 rounds/s	800,000
-
-============================
- Job utilisation efficiency
-============================
-
-Job ID: 23204526
-Cluster: viking
-User/Group: jht517/clusterusers
-State: COMPLETED (exit code 0)
-Nodes: 1
-Cores per node: 32
-CPU Utilized: 00:03:55
-CPU Efficiency: 56.49% of 00:06:56 core-walltime
-Job Wall-clock time: 00:00:13
-Memory Utilized: 1.42 MB
-Memory Efficiency: 1.42% of 100.00 MB
- Requested wall clock time: 00:10:00
-    Actual wall clock time: 00:00:13
-Wall clock time efficiency: 2.2%
-           Job queued time: 00:00:12
