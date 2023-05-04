@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --job-name=FIS_1
-#SBATCH --time=00:10:00                 # Maximum time (HH:MM:SS)
+#SBATCH --time=00:20:00                 # Maximum time (HH:MM:SS)
 #SBATCH --ntasks=32                      # run on a single CPU
 #SBATCH --mem=100mb                       # reserve 1GB memory for job
 #SBATCH --output=./logs/1.log                 # standard output and error log
