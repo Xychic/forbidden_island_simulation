@@ -49,6 +49,7 @@ fn main() {
                 let mut timer = Instant::now();
                 let mut rounds_simulated = 0;
                 let mut games_simulated = 0;
+                let mut max_game_length = 0;
 
                 for rand_seed in lower..upper {
                     let mut game = Game::new(
@@ -60,29 +61,32 @@ fn main() {
                     let (_, _, rounds) = game.play(chooser);
                     games_simulated += 1;
                     rounds_simulated += rounds;
+                    max_game_length = max_game_length.max(rounds);
                     if (Instant::now() - timer).as_millis() >= 1000 {
-                        thread_tx.send((rounds_simulated, games_simulated)).unwrap();
+                        thread_tx.send((rounds_simulated, games_simulated, max_game_length)).unwrap();
                         rounds_simulated = 0;
                         games_simulated = 0;
                         timer = Instant::now();
                     }
                 }
-                (rounds_simulated, games_simulated)
+                (rounds_simulated, games_simulated, max_game_length)
             })
         })
         .collect();
 
     let mut rounds_simulated = 0;
     let mut games_simulated = 0;
+    let mut max_game_length = 0;
     loop {
         thread::sleep(Duration::from_secs(1));
-        while let Ok((r, g)) = rx.try_recv() {
+        while let Ok((r, g, m)) = rx.try_recv() {
             rounds_simulated += r;
-            games_simulated += g
+            games_simulated += g;
+            max_game_length = max_game_length.max(m);
         }
 
         print!(
-            "Rate: {} rounds/s\t{}\r",
+            "Rate: {} rounds/s\t{}\t{max_game_length}\r",
             (rounds_simulated / (Instant::now() - start).as_secs()).separate_with_commas(),
             games_simulated.separate_with_commas()
         );
@@ -95,7 +99,7 @@ fn main() {
                 games_simulated += g
             }
             println!(
-                "Rate: {} rounds/s\t{}\r",
+                "Rate: {} rounds/s\t{}\t{max_game_length}\r",
                 (rounds_simulated / (Instant::now() - start).as_secs()).separate_with_commas(),
                 games_simulated.separate_with_commas()
             );
