@@ -4,13 +4,11 @@ use crate::structs::board::Board;
 
 use super::{island::IslandCardName, treasure::TreasureCard, Card, Deck};
 
-#[allow(dead_code)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct AdventurerCard {
     adventurer_type: AdventurerCardType,
 }
 
-#[allow(dead_code)]
 impl AdventurerCard {
     pub fn new(&adventurer_type: &AdventurerCardType) -> Self {
         AdventurerCard { adventurer_type }

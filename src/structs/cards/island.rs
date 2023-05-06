@@ -1,7 +1,6 @@
 use super::{treasure::TreasureType, Card, Deck};
 use std::slice::Iter;
 
-#[allow(dead_code)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum IslandCardState {
     Normal,
@@ -155,7 +154,6 @@ impl IslandCardName {
     }
 }
 
-#[allow(dead_code)]
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct IslandCard {
     state: IslandCardState,
@@ -163,16 +161,7 @@ pub struct IslandCard {
     name: IslandCardName,
 }
 
-#[allow(dead_code)]
 impl IslandCard {
-    pub fn new(can_retrieve: Option<TreasureType>, name: IslandCardName) -> IslandCard {
-        IslandCard {
-            state: IslandCardState::Normal,
-            can_retrieve,
-            name,
-        }
-    }
-
     pub fn from_name(name: &IslandCardName) -> IslandCard {
         match name {
             IslandCardName::TempleOfTheSun => IslandCard {

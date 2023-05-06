@@ -105,12 +105,10 @@ impl TreasureCardType {
 }
 
 #[derive(Debug, Clone, PartialEq, Eq, Hash)]
-#[allow(dead_code)]
 pub struct TreasureCard {
     treasure_type: TreasureCardType,
 }
 
-#[allow(dead_code)]
 impl TreasureCard {
     pub fn new(&treasure_type: &TreasureCardType) -> TreasureCard {
         TreasureCard { treasure_type }

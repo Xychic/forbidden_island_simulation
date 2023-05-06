@@ -1,6 +1,6 @@
 pub mod moves;
 
-use std::collections::HashSet;
+use std::{collections::HashSet, fmt::Debug};
 
 use itertools::Itertools;
 use rand::Rng;
@@ -72,7 +72,6 @@ impl<R: Rng> Game<R> {
         // Setup 6 - Hand out Treasure Deck Cards
         for _ in 0..2 {
             for adventurer in adventurers.iter_mut() {
-                // adventurer.receive_card()
                 loop {
                     let card = treasure_deck.pop_next().unwrap();
                     if card.get_type() == &TreasureCardType::WaterRise {
@@ -103,7 +102,10 @@ impl<R: Rng> Game<R> {
         }
     }
 
-    pub fn play<F: Fn(Action, &Vec<String>) -> usize>(&mut self, player: F) -> (bool, String, u64) {
+    pub fn play<F: Fn(&Game<R>, Action, &Vec<String>) -> usize>(
+        &mut self,
+        player: F,
+    ) -> (bool, String, u64) {
         let adventurer_types = self
             .adventurers
             .iter()
@@ -411,7 +413,7 @@ impl<R: Rng> Game<R> {
         })
     }
 
-    fn discard_cards<F: Fn(Action, &Vec<String>) -> usize>(
+    fn discard_cards<F: Fn(&Game<R>, Action, &Vec<String>) -> usize>(
         &mut self,
         adventurer_type: &AdventurerCardType,
         chooser: F,
@@ -446,7 +448,7 @@ impl<R: Rng> Game<R> {
                 .enumerate()
                 .map(|(i, (_, s))| (format!("{i}: {s}")))
                 .collect();
-            chooser(Action::DiscardCards, &action_strings)
+            chooser(self, Action::DiscardCards, &action_strings)
         };
         let (index, use_special, card_type) = possible_discards[choice].0;
         if use_special {
@@ -462,7 +464,7 @@ impl<R: Rng> Game<R> {
             .remove_card(index);
     }
 
-    fn initial_actions<F: Fn(Action, &Vec<String>) -> usize>(
+    fn initial_actions<F: Fn(&Game<R>, Action, &Vec<String>) -> usize>(
         &mut self,
         adventurer_type: &AdventurerCardType,
         chooser: F,
@@ -478,7 +480,7 @@ impl<R: Rng> Game<R> {
             intial_choices.push((Action::Move, format!("Move {adventurer_type:?}")));
         }
 
-        if self.can_shore_up(adventurer_type, &adventurer.get_pos()) {
+        if self.can_shore_up(adventurer_type, adventurer.get_pos()) {
             intial_choices.push((Action::ShoreUp, String::from("Shore up tile")));
         }
 
@@ -531,7 +533,7 @@ impl<R: Rng> Game<R> {
             .enumerate()
             .map(|(i, (_, s))| (format!("{i}: {s}")))
             .collect();
-        let choice = chooser(Action::Initial, &action_strings);
+        let choice = chooser(self, Action::Initial, &action_strings);
 
         match intial_choices[choice].0 {
             Action::Move => self.move_adventurer(adventurer_type, chooser, actions_left),
@@ -548,7 +550,7 @@ impl<R: Rng> Game<R> {
         }
     }
 
-    fn move_adventurer<F: Fn(Action, &Vec<String>) -> usize>(
+    fn move_adventurer<F: Fn(&Game<R>, Action, &Vec<String>) -> usize>(
         &mut self,
         adventurer_type: &AdventurerCardType,
         chooser: F,
@@ -609,7 +611,7 @@ impl<R: Rng> Game<R> {
                 .enumerate()
                 .map(|(i, (_, s))| (format!("{i}: {s}")))
                 .collect();
-            chooser(Action::Move, &action_strings)
+            chooser(self, Action::Move, &action_strings)
         };
 
         match actions[choice].0 {
@@ -627,7 +629,7 @@ impl<R: Rng> Game<R> {
         self.initial_actions(adventurer_type, chooser, actions_left - 1);
     }
 
-    fn move_adventurer_flood<F: Fn(Action, &Vec<String>) -> usize>(
+    fn move_adventurer_flood<F: Fn(&Game<R>, Action, &Vec<String>) -> usize>(
         &mut self,
         adventurer_type: &AdventurerCardType,
         chooser: F,
@@ -687,14 +689,14 @@ impl<R: Rng> Game<R> {
                 .enumerate()
                 .map(|(i, (_, s))| (format!("{i}: {s}")))
                 .collect();
-            chooser(Action::Move, &action_strings)
+            chooser(self, Action::Move, &action_strings)
         };
         self.get_adventurer_mut(adventurer_type)
             .unwrap()
             .move_to(*actions[choice].0);
     }
 
-    fn shore_up<F: Fn(Action, &Vec<String>) -> usize>(
+    fn shore_up<F: Fn(&Game<R>, Action, &Vec<String>) -> usize>(
         &mut self,
         adventurer_type: &AdventurerCardType,
         chooser: F,
@@ -703,7 +705,7 @@ impl<R: Rng> Game<R> {
         self.shore_up_sub(adventurer_type, &chooser);
         let adventurer = self.get_adventurer(adventurer_type).unwrap();
         if adventurer_type == &AdventurerCardType::Engineer
-            && self.can_shore_up(adventurer_type, &adventurer.get_pos())
+            && self.can_shore_up(adventurer_type, adventurer.get_pos())
         {
             let actions = vec![
                 (
@@ -717,7 +719,7 @@ impl<R: Rng> Game<R> {
                 .enumerate()
                 .map(|(i, (_, s))| (format!("{i}: {s}")))
                 .collect();
-            let choice = chooser(Action::ShoreUp, &action_strings);
+            let choice = chooser(self, Action::ShoreUp, &action_strings);
             match actions[choice].0 {
                 Action::ShoreUp => self.shore_up_sub(adventurer_type, &chooser),
                 Action::EndAction => {}
@@ -726,14 +728,14 @@ impl<R: Rng> Game<R> {
         }
         self.initial_actions(adventurer_type, chooser, actions_left - 1);
     }
-    fn shore_up_sub<F: Fn(Action, &Vec<String>) -> usize>(
+    fn shore_up_sub<F: Fn(&Game<R>, Action, &Vec<String>) -> usize>(
         &mut self,
         adventurer_type: &AdventurerCardType,
         chooser: F,
     ) {
         let adventurer = self.get_adventurer(adventurer_type).unwrap();
         let mut actions = Vec::new();
-        for pos in self.get_shorable_by_adventurer(&adventurer.get_type(), &adventurer.get_pos()) {
+        for pos in self.get_shorable_by_adventurer(adventurer.get_type(), adventurer.get_pos()) {
             actions.push((
                 pos,
                 format!(
@@ -751,11 +753,11 @@ impl<R: Rng> Game<R> {
                 .enumerate()
                 .map(|(i, (_, s))| (format!("{i}: {s}")))
                 .collect();
-            chooser(Action::ShoreUp, &action_strings)
+            chooser(self, Action::ShoreUp, &action_strings)
         };
         self.board.shore_up(&actions[choice].0);
     }
-    fn give_card<F: Fn(Action, &Vec<String>) -> usize>(
+    fn give_card<F: Fn(&Game<R>, Action, &Vec<String>) -> usize>(
         &mut self,
         adventurer_type: &AdventurerCardType,
         chooser: F,
@@ -788,7 +790,7 @@ impl<R: Rng> Game<R> {
                 .enumerate()
                 .map(|(i, (_, s))| (format!("{i}: {s}")))
                 .collect();
-            chooser(Action::GiveCard, &action_strings)
+            chooser(self, Action::GiveCard, &action_strings)
         };
         let (card_index, reciever_type) = actions[choice].0;
         let card = self
@@ -802,7 +804,7 @@ impl<R: Rng> Game<R> {
         self.initial_actions(adventurer_type, chooser, actions_left - 1);
     }
 
-    fn capture_treasure<F: Fn(Action, &Vec<String>) -> usize>(
+    fn capture_treasure<F: Fn(&Game<R>, Action, &Vec<String>) -> usize>(
         &mut self,
         adventurer_type: &AdventurerCardType,
         treasure_type: TreasureType,
@@ -823,7 +825,7 @@ impl<R: Rng> Game<R> {
         self.initial_actions(adventurer_type, chooser, actions_left - 1);
     }
 
-    fn play_action_card<F: Fn(Action, &Vec<String>) -> usize>(
+    fn play_action_card<F: Fn(&Game<R>, Action, &Vec<String>) -> usize>(
         &mut self,
         adventurer_type: &AdventurerCardType,
         chooser: F,
@@ -862,7 +864,7 @@ impl<R: Rng> Game<R> {
                 .enumerate()
                 .map(|(i, (_, s))| (format!("{i}: {s}")))
                 .collect();
-            chooser(Action::PlayActionCard, &action_strings)
+            chooser(self, Action::PlayActionCard, &action_strings)
         };
 
         let (adventurer, card_index, card_type) = actions[choice].0;
@@ -878,7 +880,7 @@ impl<R: Rng> Game<R> {
         self.initial_actions(adventurer_type, chooser, actions_left);
     }
 
-    fn sandbag<F: Fn(Action, &Vec<String>) -> usize>(&mut self, chooser: F) {
+    fn sandbag<F: Fn(&Game<R>, Action, &Vec<String>) -> usize>(&mut self, chooser: F) {
         let shorable = self.board.get_shorable();
         let actions: Vec<_> = shorable
             .iter()
@@ -892,13 +894,13 @@ impl<R: Rng> Game<R> {
                 .enumerate()
                 .map(|(i, (_, s))| (format!("{i}: {s}")))
                 .collect();
-            chooser(Action::Sandbag, &action_strings)
+            chooser(self, Action::Sandbag, &action_strings)
         };
         self.board
             .shore_up(&self.board.get_location(actions[choice].0));
     }
 
-    fn helicopter_lift<F: Fn(Action, &Vec<String>) -> usize>(&mut self, chooser: F) {
+    fn helicopter_lift<F: Fn(&Game<R>, Action, &Vec<String>) -> usize>(&mut self, chooser: F) {
         let mut states = Vec::new();
         for (key, group) in &self
             .adventurers
@@ -946,7 +948,7 @@ impl<R: Rng> Game<R> {
                 .enumerate()
                 .map(|(i, (_, s))| (format!("{i}: {s}")))
                 .collect();
-            chooser(Action::HelicopterLift, &action_strings)
+            chooser(self, Action::HelicopterLift, &action_strings)
         };
         let (pos, who) = &actions[choice].0;
         for a in who {

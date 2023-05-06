@@ -17,7 +17,6 @@ pub struct Deck<T: Card> {
     pub cards: Vec<T>,
 }
 
-#[allow(dead_code)]
 impl<T: Card> Deck<T> {
     /// Copies `cards` into a new `Deck<T>`.
     pub fn from(cards: &[T]) -> Deck<T> {
@@ -38,11 +37,6 @@ impl<T: Card> Deck<T> {
         Deck { cards: Vec::new() }
     }
 
-    /// Returns a reference to the element at `index` or `None` if out of bounds
-    pub fn peak_card(&self, index: usize) -> Option<&T> {
-        self.cards.get(index)
-    }
-
     /// Removes and returns the card at position `index`
     pub fn pop_card(&mut self, index: usize) -> Option<T> {
         if index >= self.cards.len() {
@@ -50,11 +44,6 @@ impl<T: Card> Deck<T> {
         } else {
             Some(self.cards.remove(index))
         }
-    }
-
-    /// Returns a reference to the card on top or `None` if deck is empty
-    pub fn peak_next(&self) -> Option<&T> {
-        self.peak_card(0)
     }
 
     /// Removes and returns the card on the top of `self`

@@ -1,4 +1,5 @@
 use std::{
+    fmt::Debug,
     io::{self, Write},
     sync::mpsc,
     thread,
@@ -63,7 +64,9 @@ fn main() {
                     rounds_simulated += rounds;
                     max_game_length = max_game_length.max(rounds);
                     if (Instant::now() - timer).as_millis() >= 1000 {
-                        thread_tx.send((rounds_simulated, games_simulated, max_game_length)).unwrap();
+                        thread_tx
+                            .send((rounds_simulated, games_simulated, max_game_length))
+                            .unwrap();
                         rounds_simulated = 0;
                         games_simulated = 0;
                         timer = Instant::now();
@@ -94,9 +97,10 @@ fn main() {
 
         if handles.iter().all(|h| h.is_finished()) {
             for h in handles {
-                let (r, g) = h.join().unwrap();
+                let (r, g, m) = h.join().unwrap();
                 rounds_simulated += r;
-                games_simulated += g
+                games_simulated += g;
+                max_game_length = max_game_length.max(m);
             }
             println!(
                 "Rate: {} rounds/s\t{}\t{max_game_length}\r",
@@ -108,7 +112,7 @@ fn main() {
     }
 }
 
-fn _manual_chooser(_stage: Action, v: &Vec<String>) -> usize {
+fn _manual_chooser<T: Rng>(_data: &Game<T>, _stage: Action, v: &Vec<String>) -> usize {
     let mut guess;
     loop {
         // dbg!(&stage);
@@ -130,7 +134,7 @@ fn _manual_chooser(_stage: Action, v: &Vec<String>) -> usize {
     }
 }
 
-fn chooser(stage: Action, v: &Vec<String>) -> usize {
+fn chooser<T: Rng + Debug>(_data: &Game<T>, stage: Action, v: &Vec<String>) -> usize {
     if v.is_empty() {
         dbg!(stage);
         panic!()

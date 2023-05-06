@@ -1,17 +1,11 @@
 use super::{island::IslandCardName, Card};
 
-#[allow(dead_code)]
 #[derive(Debug, Clone, PartialEq, Eq)]
 pub struct FloodCard {
     island_card: IslandCardName,
 }
 
-#[allow(dead_code)]
 impl FloodCard {
-    pub fn new(island_card: IslandCardName) -> FloodCard {
-        FloodCard { island_card }
-    }
-
     pub fn from_name(name: &IslandCardName) -> FloodCard {
         FloodCard {
             island_card: name.to_owned(),
@@ -38,15 +32,6 @@ mod tests {
     use crate::structs::cards::Deck;
 
     use super::*;
-
-    #[test]
-    fn test_fn_new() {
-        let a = FloodCard {
-            island_card: IslandCardName::BreakersBridge,
-        };
-        let b = FloodCard::new(IslandCardName::BreakersBridge);
-        assert_eq!(a, b);
-    }
 
     #[test]
     fn test_fn_from_name() {
